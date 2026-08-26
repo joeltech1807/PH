@@ -1,7 +1,49 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   app.js — SĀVA Studio JavaScript
-   Handles: scroll effects, fade-in animations, nav, testimonials, form
-   ───────────────────────────────────────────────────────────────────────── */
+   app.js — Universe Healing Haven JavaScript
+   Handles: scroll bg, header, nav, fade-in, journey, cards, form, WhatsApp
+   ─────────────────────────────────────────────────────────────────────────
+
+   ── MAJOR EVENTS DATA ────────────────────────────────────────────────────
+   To update events: add, remove or edit objects in this array only.
+   The section layout will automatically reflect your changes.
+   Fields:
+     date        — displayed event date string
+     title       — full conference/event title
+     shortTitle  — abbreviation shown as a badge (optional, pass '' to hide)
+     description — one or two short sentences about the event (optional)
+     image       — path relative to site root, e.g. 'assets/event_xyz.jpg'
+     imageAlt    — descriptive alt text for the image
+     links       — array of { label, url, newTab } objects;
+                   newTab defaults to true for external links
+   ─────────────────────────────────────────────────────────────────────────
+*/
+
+const majorEvents = [
+  {
+    date: '28th & 29th August 2026',
+    title: '2nd International Conference on “Smart Systems for Electrical, Electronics, Communication and Computer Engineering”',
+    shortTitle: 'ICSSECC 26',
+    description: 'A premier gathering of global researchers, engineers and innovators advancing the frontiers of smart systems across electrical, electronics, communication and computing domains.',
+    image: 'assets/event_icssecc_26.jpg',
+    imageAlt: 'ICSSECC 26 — Smart Systems International Conference',
+    links: [
+      { label: 'Poster',   url: '#', newTab: false },
+      { label: 'Brochure', url: '#', newTab: false },
+      { label: 'Website',  url: '#', newTab: true  }
+    ]
+  },
+  {
+    date: '24th & 25th August 2026',
+    title: '3rd International Conference on “Materials, Design and Manufacturing for Sustainable Environment”',
+    shortTitle: 'ICMDMSE 2026',
+    description: 'Bringing together thought leaders in sustainable materials science, advanced manufacturing and eco-conscious design to shape the future of responsible engineering.',
+    image: 'assets/event_icmdmse_2026.jpg',
+    imageAlt: 'ICMDMSE 2026 — Materials, Design & Manufacturing Conference',
+    links: [
+      { label: 'Website', url: '#', newTab: true }
+    ]
+  }
+];
 
 (function () {
   'use strict';
@@ -56,9 +98,7 @@
       rafId = requestAnimationFrame(tick);
       if (!ready) return;
 
-      /* Lerp current toward target for buttery-smooth scrubbing */
       currentFrame += (targetFrame - currentFrame) * 0.12;
-
       const rounded = Math.round(currentFrame);
       drawFrame(rounded);
     }
@@ -79,7 +119,6 @@
       img.src = FOLDER + 'ezgif-frame-' + pad(i + 1) + '.jpg';
       img.onload = function () {
         loaded++;
-        /* Start as soon as the first frame is ready */
         if (loaded === 1) {
           ready = true;
           drawFrame(0);
@@ -93,7 +132,7 @@
     window.addEventListener('resize',  resizeCanvas, { passive: true });
     window.addEventListener('scroll',  onScroll,     { passive: true });
     tick();
-    onScroll(); /* Set correct initial frame on page load */
+    onScroll();
   })();
 
   /* ── Scroll: Header ──────────────────────────────────────────────────── */
@@ -151,102 +190,105 @@
 
   fadeEls.forEach((el) => fadeObserver.observe(el));
 
-  /* ── Testimonials: Simple carousel on mobile ─────────────────────────── */
-  const track = document.getElementById('testimonials-track');
-  const dots = document.querySelectorAll('.t-dot');
-  let currentSlide = 0;
-  let autoAdvance = null;
-
-  function getSlideCount() {
-    if (window.innerWidth <= 768) return 4;
-    if (window.innerWidth <= 1024) return 2;
-    return 0; // no sliding needed on desktop (all 4 visible)
-  }
-
-  function goToSlide(index) {
-    const total = getSlideCount();
-    if (total === 0) return;
-    currentSlide = Math.max(0, Math.min(index, total - 1));
-    track.style.transform = `translateX(calc(-${currentSlide * 100}% - ${currentSlide * 24}px))`;
-    dots.forEach((d, i) => d.classList.toggle('t-dot--active', i === currentSlide));
-  }
-
-  dots.forEach((dot) => {
-    dot.addEventListener('click', () => {
-      clearInterval(autoAdvance);
-      goToSlide(parseInt(dot.dataset.index, 10));
-      startAutoAdvance();
+  /* ── Smooth scroll: Anchor links ─────────────────────────────────────── */
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+      const target = document.querySelector(targetId);
+      if (target) {
+        e.preventDefault();
+        const headerHeight = header ? header.offsetHeight : 0;
+        const targetTop = target.getBoundingClientRect().top + window.scrollY - headerHeight;
+        window.scrollTo({ top: targetTop, behavior: 'smooth' });
+      }
     });
   });
 
-  function startAutoAdvance() {
-    autoAdvance = setInterval(() => {
-      const total = getSlideCount();
-      if (total === 0) return;
-      goToSlide((currentSlide + 1) % total);
-    }, 5000);
+  /* ── Service Card hover tilt (desktop only) ──────────────────────────── */
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    const serviceCards = document.querySelectorAll('.service-card');
+    serviceCards.forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `translateY(-6px) rotateX(${y * -3}deg) rotateY(${x * 3}deg)`;
+        card.style.transition = 'transform 0.1s ease';
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+        card.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s';
+      });
+    });
+
+    /* ── Pillar Card hover tilt ── */
+    const pillarCards = document.querySelectorAll('.pillar-card');
+    pillarCards.forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `translateY(-8px) rotateX(${y * -4}deg) rotateY(${x * 4}deg)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+        card.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      });
+    });
+
+    /* ── Why Card hover tilt ── */
+    const whyCards = document.querySelectorAll('.why-card');
+    whyCards.forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `translateY(-6px) rotateX(${y * -3}deg) rotateY(${x * 3}deg)`;
+        card.style.transition = 'transform 0.1s ease';
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+        card.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s';
+      });
+    });
   }
 
-  // Touch swipe support for testimonials
-  let touchStartX = 0;
-  let touchEndX = 0;
+  /* ── Journey Steps: Staggered animation via observer ─────────────────── */
+  const journeySteps = document.querySelectorAll('.journey-step');
+  const journeyObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const number = el.querySelector('.journey-step-number');
+          if (number) {
+            number.style.animation = 'journeyPulse 0.6s ease both';
+          }
+          journeyObserver.unobserve(el);
+        }
+      });
+    },
+    { threshold: 0.3 }
+  );
 
-  if (track) {
-    track.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    }, { passive: true });
+  journeySteps.forEach((step) => journeyObserver.observe(step));
 
-    track.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      const diff = touchStartX - touchEndX;
-      if (Math.abs(diff) > 40) {
-        clearInterval(autoAdvance);
-        goToSlide(diff > 0 ? currentSlide + 1 : currentSlide - 1);
-        startAutoAdvance();
-      }
-    }, { passive: true });
-  }
+  // Add keyframe for journey pulse
+  const journeyStyle = document.createElement('style');
+  journeyStyle.textContent = `
+    @keyframes journeyPulse {
+      0% { transform: scale(0.7); opacity: 0; }
+      60% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  `;
+  document.head.appendChild(journeyStyle);
 
-  // Handle responsive layout changes
-  let resizeTimer;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      if (getSlideCount() === 0 && track) {
-        track.style.transform = '';
-      }
-      goToSlide(0);
-    }, 250);
-  });
-
-  startAutoAdvance();
-
-  /* ── Parallax: Hero image ────────────────────────────────────────────── */
-  const heroImg = document.querySelector('.hero-img');
-
-  function heroParallax() {
-    if (!heroImg || window.innerWidth <= 768) return;
-    const scrolled = window.scrollY;
-    heroImg.style.transform = `translateY(${scrolled * 0.04}px)`;
-  }
-
-  window.addEventListener('scroll', heroParallax, { passive: true });
-
-  /* ── Parallax: Inner Light Section ──────────────────────────────────── */
-  const innerLightImg = document.querySelector('.inner-light-img');
-
-  function innerLightParallax() {
-    if (!innerLightImg || window.innerWidth <= 768) return;
-    const section = innerLightImg.closest('.inner-light-section');
-    if (!section) return;
-    const rect = section.getBoundingClientRect();
-    const offset = rect.top;
-    innerLightImg.style.transform = `translateY(${offset * -0.08}px)`;
-  }
-
-  window.addEventListener('scroll', innerLightParallax, { passive: true });
-
-  /* ── Form: Booking ───────────────────────────────────────────────────── */
+  /* ── Form: Contact / Booking ─────────────────────────────────────────── */
   const bookingForm = document.getElementById('booking-form');
   const formSuccess = document.getElementById('form-success');
   const submitBtn = document.getElementById('submit-btn');
@@ -271,12 +313,83 @@
 
       if (!valid) return;
 
-      // Simulate submission
-      submitBtn.textContent = 'Sending...';
+      // Retrieve form values
+      const fullName = document.getElementById('fullName').value.trim();
+      const phoneVal = document.getElementById('phone').value.trim();
+      const emailVal = document.getElementById('email').value.trim();
+      const locationVal = document.getElementById('location').value.trim() || 'Not specified';
+      const serviceSelect = document.getElementById('service');
+      const serviceText = serviceSelect.options[serviceSelect.selectedIndex].text;
+      
+      const sessionRadio = bookingForm.querySelector('input[name="sessionType"]:checked');
+      const sessionVal = sessionRadio ? sessionRadio.value : 'Not specified';
+      
+      const messageVal = document.getElementById('message').value.trim() || 'None';
+
+      // Save contact submission to real database (localStorage hh_db_contacts)
+      const contacts = JSON.parse(localStorage.getItem('hh_db_contacts')) || [];
+      const nextId = 'MSG' + String(contacts.length + 1).padStart(3, '0');
+      const timestamp = new Date().toISOString().replace('Z', '+05:30');
+      
+      const newContact = {
+        id: nextId,
+        name: fullName,
+        phone: phoneVal,
+        whatsapp: phoneVal, // fallback phone as whatsapp
+        email: emailVal,
+        location: locationVal,
+        preferredService: serviceText,
+        preferredSessionType: sessionVal,
+        message: messageVal,
+        status: 'new',
+        assignedTo: '',
+        internalNotes: '',
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        repliedAt: '',
+        closedAt: ''
+      };
+      
+      contacts.push(newContact);
+      localStorage.setItem('hh_db_contacts', JSON.stringify(contacts));
+
+      // Append Audit Log
+      const logs = JSON.parse(localStorage.getItem('hh_db_logs')) || [];
+      logs.unshift({
+        timestamp: timestamp,
+        user: 'anonymous@visitor.com',
+        role: 'Website Visitor',
+        action: 'Contact Submission',
+        details: `Visitor ${fullName} submitted contact enquiry message ${nextId}`,
+        oldValue: '',
+        newValue: JSON.stringify(newContact),
+        ip: '127.0.0.1 (Web Visitor)'
+      });
+      localStorage.setItem('hh_db_logs', JSON.stringify(logs));
+
+      // Build structured WhatsApp message
+      const waText = `Hello! I would like to book a session at Universe Healing Haven. Here are my details:
+
+• Name: ${fullName}
+• Phone: ${phoneVal || 'Not specified'}
+• Email: ${emailVal}
+• Location: ${locationVal}
+• Service: ${serviceText}
+• Session Type: ${sessionVal}
+• Message: ${messageVal}`;
+
+      // Construct WhatsApp URL
+      const waUrl = `https://wa.me/917207960077?text=${encodeURIComponent(waText)}`;
+
+      // Open WhatsApp immediately in new tab (avoids popup blockers)
+      window.open(waUrl, '_blank');
+
+      // Update UI
+      submitBtn.textContent = 'Opening WhatsApp...';
       submitBtn.disabled = true;
 
       setTimeout(() => {
-        bookingForm.querySelectorAll('.form-group').forEach(g => {
+        bookingForm.querySelectorAll('.form-group, .form-row').forEach(g => {
           g.style.opacity = '0';
           g.style.transition = 'opacity 0.4s';
         });
@@ -285,83 +398,171 @@
         setTimeout(() => {
           formSuccess.classList.add('visible');
         }, 400);
-      }, 1200);
+      }, 1000);
     });
   }
 
-  /* ── Smooth scroll: Anchor links ─────────────────────────────────────── */
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener('click', function (e) {
-      const targetId = this.getAttribute('href');
-      if (targetId === '#') return;
-      const target = document.querySelector(targetId);
-      if (target) {
-        e.preventDefault();
-        const headerHeight = header ? header.offsetHeight : 0;
-        const targetTop = target.getBoundingClientRect().top + window.scrollY - headerHeight;
-        window.scrollTo({ top: targetTop, behavior: 'smooth' });
+  /* ── Major Events: Data-driven rendering ────────────────────────────── */
+  (function renderEvents() {
+    const list  = document.getElementById('events-list');
+    const empty = document.getElementById('events-empty');
+    if (!list) return;
+
+    // Retrieve published events from the real database
+    const dbEvents = JSON.parse(localStorage.getItem('hh_db_events')) || [];
+    const publishedEvents = dbEvents
+      .filter(ev => ev.status === 'published')
+      .sort((a, b) => parseInt(a.displayOrder || 99) - parseInt(b.displayOrder || 99));
+
+    if (publishedEvents.length === 0) {
+      list.style.display  = 'none';
+      if (empty) {
+        empty.style.display = 'block';
+        empty.innerHTML = '<p class="events-empty-text">No published events currently available. Check back soon.</p>';
+      }
+      return;
+    }
+
+    if (empty) empty.style.display = 'none';
+    list.style.display = 'flex';
+    list.innerHTML = ''; // clear initial content
+
+    publishedEvents.forEach(function (ev, idx) {
+      /* ── Build links HTML ── */
+      const linksHTML = ev.links && ev.links.length
+        ? ev.links.map(function (lk) {
+            const target = lk.newTab ? 'target="_blank" rel="noopener"' : '';
+            return '<a href="' + (lk.url || '#') + '" class="event-link-btn" ' + target + '>' +
+                   lk.label + ' <span class="event-link-arrow">&rarr;</span>' +
+                   '</a>';
+          }).join('')
+        : '';
+
+      /* ── Build short-title badge ── */
+      const badgeHTML = ev.shortTitle
+        ? '<span class="event-short-title">' + ev.shortTitle + '</span>'
+        : '';
+
+      /* ── Build description text ── */
+      const descHTML = ev.description
+        ? '<p class="event-description">' + ev.description + '</p>'
+        : '';
+
+      /* ── Assemble event row ── */
+      const row = document.createElement('article');
+      row.className  = 'event-row fade-in';
+      row.dataset.delay = String(idx * 120);
+      row.innerHTML  =
+        '<div class="event-details">' +
+          '<span class="event-number">Event ' + String(idx + 1).padStart(2, '0') + '</span>' +
+          '<span class="event-date">' + ev.date + '</span>' +
+          '<h3 class="event-title">' + ev.title + '</h3>' +
+          badgeHTML +
+          descHTML +
+          (linksHTML ? '<div class="event-links">' + linksHTML + '</div>' : '') +
+        '</div>' +
+        '<div class="event-image-col">' +
+          '<div class="event-image-wrap">' +
+            '<img src="' + ev.image + '" alt="' + (ev.imageAlt || ev.title) + '" class="event-img" loading="lazy" />' +
+          '</div>' +
+        '</div>';
+
+      list.appendChild(row);
+    });
+
+    /* Re-observe newly added fade-in elements */
+    list.querySelectorAll('.fade-in').forEach(function (el) {
+      fadeObserver.observe(el);
+    });
+  })();
+
+  /* ── Active Nav Highlight on Scroll ──────────────────────────────────── */
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('section[id]');
+
+  function highlightNav() {
+    const scrollPos = window.scrollY + 120;
+
+    sections.forEach((section) => {
+      const top = section.offsetTop;
+      const height = section.offsetHeight;
+      let id = section.getAttribute('id');
+
+      // Map founder section to #about nav link
+      if (id === 'founder') {
+        id = 'about';
+      }
+
+      if (scrollPos >= top && scrollPos < top + height) {
+        navLinks.forEach((link) => {
+          link.style.color = '';
+          if (link.getAttribute('href') === '#' + id) {
+            link.style.color = '#C396FC';
+          }
+        });
       }
     });
-  });
-
-  /* ── Date input: set min to today ───────────────────────────────────── */
-  const dateInput = document.getElementById('preferredDate');
-  if (dateInput) {
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today);
   }
 
-  /* ── Subtle ambient movement on pillar cards ─────────────────────────── */
-  const pillarCards = document.querySelectorAll('.pillar-card');
+  window.addEventListener('scroll', highlightNav, { passive: true });
+  highlightNav();
 
-  pillarCards.forEach((card) => {
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
-      card.style.transform = `translateY(-8px) rotateX(${y * -4}deg) rotateY(${x * 4}deg)`;
-    });
+  /* ── WhatsApp float: show after scroll ───────────────────────────────── */
+  const waFloat = document.querySelector('.whatsapp-float');
+  if (waFloat) {
+    waFloat.style.opacity = '0';
+    waFloat.style.transform = 'scale(0.8)';
+    waFloat.style.transition = 'opacity 0.5s, transform 0.5s';
 
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = '';
-      card.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-    });
-  });
+    function showWaFloat() {
+      if (window.scrollY > 300) {
+        waFloat.style.opacity = '1';
+        waFloat.style.transform = 'scale(1)';
+      } else {
+        waFloat.style.opacity = '0';
+        waFloat.style.transform = 'scale(0.8)';
+      }
+    }
 
-  /* ── Cursor: optional subtle organic motion ──────────────────────────── */
-  // Lightweight — only on desktop
-  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    const sessionCards = document.querySelectorAll('.session-card');
-
-    sessionCards.forEach((card) => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        card.style.transform = `translateY(-10px) rotateX(${y * -3}deg) rotateY(${x * 3}deg)`;
-        card.style.transition = 'transform 0.1s ease';
-      });
-
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = '';
-        card.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s';
-      });
-    });
+    window.addEventListener('scroll', showWaFloat, { passive: true });
+    showWaFloat();
   }
 
-  /* ── Retreat card image hover ────────────────────────────────────────── */
-  document.querySelectorAll('.retreat-card').forEach((card) => {
-    const img = card.querySelector('.retreat-img');
-    if (!img) return;
+  /* ── Console branding ───────────────────────────────────────────────── */
+  console.log(
+    '%cUniverse Healing Haven — Heal · Balance · Wellness',
+    'font-family:Georgia,serif;font-size:14px;color:#C396FC;'
+  );
 
-    card.addEventListener('mouseenter', () => {
-      img.style.transform = 'scale(1.05)';
-      img.style.transition = 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)';
-    });
-    card.addEventListener('mouseleave', () => {
-      img.style.transform = '';
-    });
-  });
+  /* ── Cursor-following lavender glow (desktop only) ──────────────────── */
+  (function initCursorGlow() {
+    /* Skip on touch devices and when reduced-motion is preferred */
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  console.log('%cSĀVA Studio — A space to breathe.', 'font-family:Georgia,serif;font-size:14px;color:#9c8570;');
+    const glow = document.getElementById('cursor-glow');
+    if (!glow) return;
+
+    let active = false;
+
+    document.addEventListener('mousemove', function (e) {
+      if (!active) {
+        glow.classList.add('active');
+        active = true;
+      }
+      document.documentElement.style.setProperty('--cursor-x', e.clientX + 'px');
+      document.documentElement.style.setProperty('--cursor-y', e.clientY + 'px');
+    }, { passive: true });
+
+    document.addEventListener('mouseleave', function () {
+      glow.classList.remove('active');
+      active = false;
+    });
+  })();
+
+  /* ── prefers-reduced-motion: skip scroll-bg frame animation ────────── */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const bgCanvas = document.getElementById('scroll-bg-canvas');
+    if (bgCanvas) bgCanvas.style.display = 'none';
+  }
 })();

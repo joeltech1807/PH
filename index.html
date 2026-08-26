@@ -3,14 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SĀVA Studio — A Sanctuary for Healing, Meditation & Inner Wellness</title>
-  <meta name="description" content="SĀVA Studio is a modern sanctuary for breath, balance and intentional living. Experience private healing sessions, guided meditation, sound healing and transformative retreats." />
+  <title>Universe Healing Haven — Heal · Balance · Wellness</title>
+  <meta name="description" content="Universe Healing Haven is a peaceful sanctuary for holistic wellness, energy healing, meditation, mindfulness and personalised wellbeing support. Begin your journey to balance." />
+  <meta name="keywords" content="healing, wellness, energy healing, meditation, mindfulness, stress management, holistic health, balance, relaxation" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=4" />
 </head>
 <body>
+
+  <!-- ═══════════════════════════════ ATMOSPHERIC LAYER ═══════════════════════════════ -->
+  <div class="atmosphere-glow" aria-hidden="true">
+    <div class="glow-orb glow-orb--1"></div>
+    <div class="glow-orb glow-orb--2"></div>
+    <div class="glow-orb glow-orb--3"></div>
+  </div>
+  <div class="cursor-glow" id="cursor-glow" aria-hidden="true"></div>
 
   <!-- ═══════════════════════════════ SCROLL BACKGROUND ANIMATION ═══════════════════════════════ -->
   <div class="scroll-bg-wrap" id="scroll-bg-wrap" aria-hidden="true">
@@ -22,17 +31,20 @@
 
   <header class="site-header" id="site-header">
     <div class="header-inner">
-      <a href="#home" class="logo-group" aria-label="SĀVA Studio Homepage">
-        <img src="logob.png" alt="SĀVA Studio Logo" class="site-logo" />
+      <a href="#home" class="logo-group" aria-label="Universe Healing Haven Homepage">
+        <img src="logofb.png" alt="Universe Healing Haven Logo" class="site-logo" />
       </a>
       <nav class="main-nav" id="main-nav">
+        <a href="#home" class="nav-link">Home</a>
         <a href="#about" class="nav-link">About</a>
-        <a href="#programs" class="nav-link">Programs</a>
-        <a href="#space" class="nav-link">Our Space</a>
-        <a href="#journal" class="nav-link">Journal</a>
+        <a href="#philosophy" class="nav-link">Philosophy</a>
+        <a href="#services" class="nav-link">Services</a>
+        <a href="#wellness" class="nav-link">Wellness</a>
+        <a href="#journey" class="nav-link">Journey</a>
+        <a href="#events" class="nav-link">Events</a>
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
-      <a href="#contact" class="btn-book">Book Now &rarr;</a>
+      <a href="#contact" class="btn-book">Book a Session &rarr;</a>
       <button class="hamburger" id="hamburger" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
@@ -41,13 +53,16 @@
 
   <div class="mobile-nav" id="mobile-nav">
     <button class="mobile-nav-close" id="mobile-nav-close" aria-label="Close menu">&times;</button>
-    <img src="logob.png" alt="SĀVA Studio Logo" class="mobile-logo" />
+    <img src="logov.png" alt="Universe Healing Haven Logo" class="mobile-logo" />
+    <a href="#home" class="mobile-nav-link">Home</a>
     <a href="#about" class="mobile-nav-link">About</a>
-    <a href="#programs" class="mobile-nav-link">Programs</a>
-    <a href="#space" class="mobile-nav-link">Our Space</a>
-    <a href="#journal" class="mobile-nav-link">Journal</a>
+    <a href="#philosophy" class="mobile-nav-link">Philosophy</a>
+    <a href="#services" class="mobile-nav-link">Services</a>
+    <a href="#wellness" class="mobile-nav-link">Wellness</a>
+    <a href="#journey" class="mobile-nav-link">Journey</a>
+    <a href="#events" class="mobile-nav-link">Events</a>
     <a href="#contact" class="mobile-nav-link">Contact</a>
-    <a href="#contact" class="btn-book mobile-book">Book Now &rarr;</a>
+    <a href="#contact" class="btn-book mobile-book">Book a Session &rarr;</a>
   </div>
 
   <main>
@@ -56,394 +71,386 @@
     <section class="hero-section" id="home">
       <div class="hero-inner">
         <div class="hero-text fade-in" data-delay="0">
-          <p class="hero-eyebrow">A Modern Sanctuary</p>
+          <p class="hero-eyebrow">Universe Healing Haven</p>
           <h1 class="hero-headline">
-            Return to<br /><em>Stillness.</em>
+            A Journey Back<br />to <em>Balance.</em>
           </h1>
-          <p class="hero-sub">A modern sanctuary for breath,<br />balance &amp; intentional living.</p>
+          <p class="hero-sub">Create space to pause, reconnect with yourself and restore your inner harmony. Move gently towards a healthier, more balanced and more fulfilling life.</p>
           <div class="hero-ctas">
-            <a href="#contact" class="btn-primary">Book a Session &rarr;</a>
-            <a href="#programs" class="btn-ghost">Explore Programs &rarr;</a>
+            <a href="#contact" class="btn-primary">Begin Your Journey &rarr;</a>
+            <a href="#services" class="btn-ghost">Explore Our Services &rarr;</a>
           </div>
         </div>
       </div>
       <!-- Organic SVG curves -->
       <svg class="hero-organic-line hero-organic-line--1" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 280 Q80 200 160 220 Q240 240 320 160 Q380 100 390 40" stroke="#D6B4FF" stroke-width="1.2" fill="none" opacity="0.65"/>
+        <path d="M10 280 Q80 200 160 220 Q240 240 320 160 Q380 100 390 40" stroke="#D6B4FF" stroke-width="1.2" fill="none" opacity="0.35"/>
       </svg>
       <svg class="hero-organic-line hero-organic-line--2" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M290 10 Q220 80 200 160 Q180 240 100 290 Q40 330 10 390" stroke="#E6D0FF" stroke-width="1.2" fill="none" opacity="0.6"/>
+        <path d="M290 10 Q220 80 200 160 Q180 240 100 290 Q40 330 10 390" stroke="#E6D0FF" stroke-width="1.2" fill="none" opacity="0.30"/>
       </svg>
     </section>
 
-    <!-- ═══════════════════════════════ ABOUT / APPROACH ═══════════════════════════════ -->
-    <section class="approach-section" id="about">
-      <div class="section-inner approach-inner">
-        <div class="approach-text fade-in">
-          <p class="eyebrow">Our Approach</p>
-          <h2 class="section-headline">Pathways to<br />Inner Calm</h2>
-          <p class="approach-body">Step into a warm, intentional space designed to nurture serenity, reconnect you with your breath, and guide you gently back to yourself. Every detail has been considered so that your body and mind can finally exhale.</p>
-          <a href="#space" class="btn-outline">View Our Space &rarr;</a>
+    <!-- ═══════════════════════════════ WELCOME / INTRODUCTION ═══════════════════════════════ -->
+    <section class="welcome-section" id="about">
+      <div class="section-inner welcome-inner">
+        <div class="welcome-text fade-in">
+          <p class="eyebrow">Welcome</p>
+          <h2 class="section-headline">A Space to<br /><em>Reconnect.</em></h2>
+          <p class="welcome-body">Universe Healing Haven is a peaceful space where you can slow down, reconnect with yourself and develop healthier wellness practices. We believe that every person's journey is unique, and our approach is shaped around your individual needs and intentions.</p>
+          <p class="welcome-body" style="margin-top:0;">Our approach gently brings together time-honoured practices to support your overall wellbeing:</p>
+          <ul class="welcome-practices">
+            <li>Energy Healing</li>
+            <li>Meditation</li>
+            <li>Relaxation</li>
+            <li>Mindfulness</li>
+            <li>Stress Management</li>
+            <li>Personalised Guidance</li>
+          </ul>
+          <a href="#services" class="btn-outline">Discover Our Services &rarr;</a>
         </div>
-        <div class="approach-image-wrap fade-in" data-delay="150">
-          <div class="approach-curve-bg"></div>
-          <img src="assets/approach_section_image.jpg" alt="Luxury meditation studio with arched window and pampas grass" class="approach-img" loading="lazy" />
-          <div class="approach-float-tag">
-            <span class="float-tag-text">Est. 2019</span>
-            <span class="float-tag-sub">Inner Wellness</span>
+        <div class="welcome-image-wrap fade-in" data-delay="150">
+          <div class="welcome-curve-bg"></div>
+          <img src="assets/about_sanctuary.jpg" alt="A warm and welcoming wellness sanctuary with natural light, green plants and soft textiles" class="welcome-img" loading="lazy" />
+          <div class="welcome-float-tag">
+            <span class="float-tag-text">Holistic Care</span>
+            <span class="float-tag-sub">Mind · Body · Spirit</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ═══════════════════════════════ PHILOSOPHY PILLARS ═══════════════════════════════ -->
+    <!-- ═══════════════════════════════ PHILOSOPHY — HEAL · BALANCE · WELLNESS ═══════════════════════════════ -->
     <section class="philosophy-section" id="philosophy">
       <div class="section-inner">
         <div class="philosophy-header fade-in">
           <p class="eyebrow">Our Philosophy</p>
-          <h2 class="section-headline">A Sanctuary for<br />the Whole Self</h2>
-          <p class="philosophy-intro">Healing is not about becoming someone new. It is about reconnecting with the quiet, grounded part of yourself that has always been within — waiting patiently beneath the noise and movement of daily life.</p>
+          <h2 class="section-headline">Heal · Balance ·<br /><em>Wellness</em></h2>
+          <p class="philosophy-intro">True wellbeing is not a destination — it is a gentle, ongoing practice of listening to yourself, nurturing what matters and creating space for positive change in every area of your life.</p>
         </div>
         <div class="pillars-grid">
+          <!-- Heal -->
           <div class="pillar-card fade-in" data-delay="0">
             <div class="pillar-icon">
               <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="24" cy="24" r="20" stroke="#D6B4FF" stroke-width="1.2"/>
-                <path d="M24 14 C24 14 18 20 18 26 C18 29.3 20.7 32 24 32 C27.3 32 30 29.3 30 26 C30 20 24 14 24 14Z" stroke="#7b4eb2" stroke-width="1.4" fill="rgba(230, 208, 255, 0.3)"/>
-                <line x1="24" y1="32" x2="24" y2="37" stroke="#7b4eb2" stroke-width="1.2"/>
+                <circle cx="24" cy="24" r="20" stroke="#a8b69d" stroke-width="1.2"/>
+                <path d="M24 14 C24 14 17 20 17 26 C17 29.9 20.1 33 24 33 C27.9 33 31 29.9 31 26 C31 20 24 14 24 14Z" stroke="#6b7d5e" stroke-width="1.4" fill="rgba(168,182,157,0.2)"/>
+                <line x1="24" y1="33" x2="24" y2="38" stroke="#6b7d5e" stroke-width="1.2"/>
               </svg>
             </div>
-            <h3 class="pillar-title">Breathe</h3>
-            <p class="pillar-text">Return to the rhythm of the breath. The breath is always present — it is the anchor that brings you home to this moment.</p>
+            <h3 class="pillar-title">Heal</h3>
+            <p class="pillar-text">Create space for physical, emotional and energetic wellbeing. Healing begins when we give ourselves permission to pause and listen within.</p>
           </div>
-          <div class="pillar-card fade-in" data-delay="100">
+          <!-- Balance -->
+          <div class="pillar-card fade-in" data-delay="120">
             <div class="pillar-icon">
               <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="24" cy="24" r="20" stroke="#D6B4FF" stroke-width="1.2"/>
-                <path d="M16 32 Q24 20 32 16" stroke="#7b4eb2" stroke-width="1.4" fill="none"/>
-                <path d="M16 24 Q20 18 28 20" stroke="#D6B4FF" stroke-width="1.2" fill="none" opacity="0.7"/>
-                <circle cx="32" cy="16" r="2.5" fill="#7b4eb2"/>
+                <circle cx="24" cy="24" r="20" stroke="#a8b69d" stroke-width="1.2"/>
+                <line x1="12" y1="24" x2="36" y2="24" stroke="#6b7d5e" stroke-width="1.4"/>
+                <circle cx="18" cy="18" r="4" stroke="#6b7d5e" stroke-width="1.2" fill="rgba(168,182,157,0.2)"/>
+                <circle cx="30" cy="30" r="4" stroke="#6b7d5e" stroke-width="1.2" fill="rgba(200,182,142,0.2)"/>
+                <path d="M18 22 L18 24" stroke="#a8b69d" stroke-width="1"/>
+                <path d="M30 24 L30 26" stroke="#a8b69d" stroke-width="1"/>
               </svg>
             </div>
-            <h3 class="pillar-title">Release</h3>
-            <p class="pillar-text">Create space for what no longer needs to be carried. Gentle release is the beginning of every transformation.</p>
+            <h3 class="pillar-title">Balance</h3>
+            <p class="pillar-text">Encourage harmony between thoughts, emotions, energy and everyday life. When we find balance, everything else begins to settle into place.</p>
           </div>
-          <div class="pillar-card fade-in" data-delay="200">
+          <!-- Wellness -->
+          <div class="pillar-card fade-in" data-delay="240">
             <div class="pillar-icon">
               <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="24" cy="24" r="20" stroke="#D6B4FF" stroke-width="1.2"/>
-                <path d="M14 28 Q24 16 34 28" stroke="#7b4eb2" stroke-width="1.4" fill="none"/>
-                <line x1="24" y1="34" x2="24" y2="28" stroke="#7b4eb2" stroke-width="1.2"/>
-                <circle cx="24" cy="36" r="2" stroke="#7b4eb2" stroke-width="1.2" fill="rgba(230, 208, 255, 0.5)"/>
+                <circle cx="24" cy="24" r="20" stroke="#a8b69d" stroke-width="1.2"/>
+                <circle cx="24" cy="24" r="7" stroke="#6b7d5e" stroke-width="1.2" fill="rgba(168,182,157,0.2)"/>
+                <line x1="24" y1="10" x2="24" y2="14" stroke="#6b7d5e" stroke-width="1.2"/>
+                <line x1="24" y1="34" x2="24" y2="38" stroke="#6b7d5e" stroke-width="1.2"/>
+                <line x1="10" y1="24" x2="14" y2="24" stroke="#6b7d5e" stroke-width="1.2"/>
+                <line x1="34" y1="24" x2="38" y2="24" stroke="#6b7d5e" stroke-width="1.2"/>
+                <line x1="14.3" y1="14.3" x2="17.2" y2="17.2" stroke="#a8b69d" stroke-width="1"/>
+                <line x1="30.8" y1="30.8" x2="33.7" y2="33.7" stroke="#a8b69d" stroke-width="1"/>
+                <line x1="33.7" y1="14.3" x2="30.8" y2="17.2" stroke="#a8b69d" stroke-width="1"/>
+                <line x1="17.2" y1="30.8" x2="14.3" y2="33.7" stroke="#a8b69d" stroke-width="1"/>
               </svg>
             </div>
-            <h3 class="pillar-title">Restore</h3>
-            <p class="pillar-text">Reconnect with balance, energy and inner stillness. Allow your nervous system to find its natural state of ease.</p>
+            <h3 class="pillar-title">Wellness</h3>
+            <p class="pillar-text">Develop positive habits and practices that contribute to a healthier, more fulfilling lifestyle — one gentle step at a time.</p>
           </div>
-          <div class="pillar-card fade-in" data-delay="300">
-            <div class="pillar-icon">
-              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="24" cy="24" r="20" stroke="#D6B4FF" stroke-width="1.2"/>
-                <circle cx="24" cy="24" r="6" stroke="#7b4eb2" stroke-width="1.2" fill="rgba(230, 208, 255, 0.4)"/>
-                <line x1="24" y1="10" x2="24" y2="14" stroke="#7b4eb2" stroke-width="1.2"/>
-                <line x1="24" y1="34" x2="24" y2="38" stroke="#7b4eb2" stroke-width="1.2"/>
-                <line x1="10" y1="24" x2="14" y2="24" stroke="#7b4eb2" stroke-width="1.2"/>
-                <line x1="34" y1="24" x2="38" y2="24" stroke="#7b4eb2" stroke-width="1.2"/>
-                <line x1="14.9" y1="14.9" x2="17.8" y2="17.8" stroke="#D6B4FF" stroke-width="1.2"/>
-                <line x1="30.2" y1="30.2" x2="33.1" y2="33.1" stroke="#D6B4FF" stroke-width="1.2"/>
-                <line x1="33.1" y1="14.9" x2="30.2" y2="17.8" stroke="#D6B4FF" stroke-width="1.2"/>
-                <line x1="17.8" y1="30.2" x2="14.9" y2="33.1" stroke="#D6B4FF" stroke-width="1.2"/>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ SERVICES ═══════════════════════════════ -->
+    <section class="services-section" id="services">
+      <div class="section-inner">
+        <div class="services-header fade-in">
+          <p class="eyebrow">Our Wellness Services</p>
+          <h2 class="section-headline">Personalised Paths<br />to <em>Wellbeing</em></h2>
+          <p class="services-intro">Each of our services is designed to meet you where you are and gently guide you toward greater balance, clarity and inner peace.</p>
+        </div>
+        <div class="services-grid">
+          <!-- Energy Healing -->
+          <div class="service-card fade-in" data-delay="0">
+            <div class="service-icon">
+              <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 3 C14 3 5 10 5 16 C5 21 9 25 14 25 C19 25 23 21 23 16 C23 10 14 3 14 3Z" stroke="#6b7d5e" stroke-width="1.3" fill="none"/>
+                <path d="M14 10 L14 18 M10 14 L18 14" stroke="#8a9a7b" stroke-width="1.2"/>
               </svg>
             </div>
-            <h3 class="pillar-title">Awaken</h3>
-            <p class="pillar-text">Make space for clarity, awareness and inner light. Step into a deeper relationship with your own presence and wisdom.</p>
+            <h3 class="service-title">Energy Healing</h3>
+            <p class="service-desc">Personalised sessions focused on releasing tension, restoring balance and supporting your body's natural capacity for relaxation and wellbeing.</p>
+          </div>
+          <!-- Meditation & Mindfulness -->
+          <div class="service-card fade-in" data-delay="80">
+            <div class="service-icon">
+              <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="14" cy="14" r="10" stroke="#6b7d5e" stroke-width="1.3" fill="none"/>
+                <circle cx="14" cy="14" r="4" stroke="#8a9a7b" stroke-width="1.2" fill="rgba(168,182,157,0.15)"/>
+                <line x1="14" y1="4" x2="14" y2="7" stroke="#a8b69d" stroke-width="1"/>
+                <line x1="14" y1="21" x2="14" y2="24" stroke="#a8b69d" stroke-width="1"/>
+              </svg>
+            </div>
+            <h3 class="service-title">Meditation &amp; Mindfulness</h3>
+            <p class="service-desc">Guided practices designed to encourage calmness, present-moment awareness, mental clarity and a deeper sense of inner peace.</p>
+          </div>
+          <!-- Stress Management -->
+          <div class="service-card fade-in" data-delay="160">
+            <div class="service-icon">
+              <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 20 Q8 12 14 14 Q20 16 24 8" stroke="#6b7d5e" stroke-width="1.3" fill="none"/>
+                <circle cx="4" cy="20" r="2" fill="#a8b69d"/>
+                <circle cx="24" cy="8" r="2" fill="#8a9a7b"/>
+              </svg>
+            </div>
+            <h3 class="service-title">Stress Management</h3>
+            <p class="service-desc">Practical, compassionate approaches for managing everyday stress, building emotional resilience and creating greater calm in your daily life.</p>
+          </div>
+          <!-- Sleep & Relaxation -->
+          <div class="service-card fade-in" data-delay="240">
+            <div class="service-icon">
+              <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 8 C16 6 11 8 10 12 C9 16 12 20 16 21 C20 22 24 19 25 15 C22 17 18 16 16 14 C14 12 14 8 17 6" stroke="#6b7d5e" stroke-width="1.3" fill="none"/>
+                <circle cx="21" cy="5" r="1" fill="#c8b68e"/>
+                <circle cx="25" cy="9" r="0.8" fill="#c8b68e"/>
+              </svg>
+            </div>
+            <h3 class="service-title">Sleep &amp; Relaxation</h3>
+            <p class="service-desc">Gentle wellness practices that support restful sleep, calm the mind and help your body return to its natural state of ease and restoration.</p>
+          </div>
+          <!-- Emotional Wellness -->
+          <div class="service-card fade-in" data-delay="320">
+            <div class="service-icon">
+              <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M14 24 C14 24 4 18 4 11 C4 7 7 4 10 4 C12.5 4 14 6 14 6 C14 6 15.5 4 18 4 C21 4 24 7 24 11 C24 18 14 24 14 24Z" stroke="#6b7d5e" stroke-width="1.3" fill="rgba(168,182,157,0.12)"/>
+              </svg>
+            </div>
+            <h3 class="service-title">Emotional Wellness</h3>
+            <p class="service-desc">A safe and compassionate space supporting emotional awareness, confidence, positive thinking and personal growth at your own pace.</p>
+          </div>
+          <!-- Kids Wellness & Super Brain Yoga -->
+          <div class="service-card fade-in" data-delay="400">
+            <div class="service-icon">
+              <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="14" cy="10" r="6" stroke="#6b7d5e" stroke-width="1.3" fill="none"/>
+                <path d="M8 25 Q14 20 20 25" stroke="#6b7d5e" stroke-width="1.3" fill="none"/>
+                <circle cx="12" cy="9" r="1" fill="#8a9a7b"/>
+                <circle cx="16" cy="9" r="1" fill="#8a9a7b"/>
+                <path d="M12 12 Q14 14 16 12" stroke="#a8b69d" stroke-width="1"/>
+              </svg>
+            </div>
+            <h3 class="service-title">Kids Wellness &amp; Super Brain Yoga</h3>
+            <p class="service-desc">Simple, engaging practices designed to support children's concentration, memory, confidence and overall wellbeing through playful, age-appropriate activities.</p>
+          </div>
+        </div>
+        <div class="services-footer fade-in">
+          <a href="#contact" class="btn-primary">Explore Wellness Services &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ HOLISTIC WELLNESS SUPPORT ═══════════════════════════════ -->
+    <section class="wellness-section" id="wellness">
+      <div class="section-inner wellness-inner">
+        <div class="wellness-text-col fade-in">
+          <p class="eyebrow">Holistic Wellness Support</p>
+          <h2 class="section-headline">Complementary<br /><em>Wellbeing</em></h2>
+          <p class="wellness-body">Universe Healing Haven provides complementary wellness support for people seeking to improve their overall quality of life. Our practices work alongside — and never replace — appropriate professional medical care.</p>
+          <p class="wellness-body" style="margin-top:0;">We offer supportive wellness practices in areas such as:</p>
+          <ul class="wellness-areas">
+            <li class="wellness-area-item">
+              <span class="wellness-area-icon"></span>
+              Stress Management
+            </li>
+            <li class="wellness-area-item">
+              <span class="wellness-area-icon"></span>
+              Sleep &amp; Relaxation
+            </li>
+            <li class="wellness-area-item">
+              <span class="wellness-area-icon"></span>
+              Emotional Wellbeing
+            </li>
+            <li class="wellness-area-item">
+              <span class="wellness-area-icon"></span>
+              Mental Clarity &amp; Focus
+            </li>
+            <li class="wellness-area-item">
+              <span class="wellness-area-icon"></span>
+              Thyroid-related Wellness
+            </li>
+            <li class="wellness-area-item">
+              <span class="wellness-area-icon"></span>
+              Gallbladder-related Wellness
+            </li>
+            <li class="wellness-area-item">
+              <span class="wellness-area-icon"></span>
+              Blood Pressure Wellness
+            </li>
+            <li class="wellness-area-item">
+              <span class="wellness-area-icon"></span>
+              General Energy &amp; Vitality
+            </li>
+          </ul>
+        </div>
+        <div class="wellness-disclaimer-col fade-in" data-delay="150">
+          <div class="disclaimer-card">
+            <div class="disclaimer-icon">
+              <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="11" cy="11" r="9" stroke="#6b7d5e" stroke-width="1.3"/>
+                <line x1="11" y1="7" x2="11" y2="13" stroke="#6b7d5e" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="11" cy="15.5" r="0.8" fill="#6b7d5e"/>
+              </svg>
+            </div>
+            <h3 class="disclaimer-title">Important Notice</h3>
+            <p class="disclaimer-text">At Universe Healing Haven, we are committed to supporting your overall wellbeing through holistic and complementary practices. Our services are designed to complement — not replace — the care provided by qualified medical professionals.</p>
+            <span class="disclaimer-highlight">"Our services are complementary wellness practices and are not intended to replace medical diagnosis, treatment or prescribed medication."</span>
+            <p class="disclaimer-text" style="margin-top:16px;">We always encourage you to continue following the guidance of your healthcare provider and to view our offerings as a supportive addition to your overall health journey.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ═══════════════════════════════ SIGNATURE SESSIONS ═══════════════════════════════ -->
-    <section class="sessions-section" id="programs">
+    <!-- ═══════════════════════════════ THE JOURNEY ═══════════════════════════════ -->
+    <section class="journey-section" id="journey">
       <div class="section-inner">
-        <div class="sessions-header fade-in">
-          <p class="eyebrow">Curated Offerings</p>
-          <h2 class="section-headline">Signature Experiences</h2>
+        <div class="journey-header fade-in">
+          <p class="eyebrow">Your Wellness Journey</p>
+          <h2 class="section-headline">The Path to<br /><em>Transformation</em></h2>
+          <p class="journey-intro">Every meaningful journey begins with a single step. Here is how we walk alongside you, gently and at your own pace.</p>
         </div>
-        <div class="sessions-grid">
-          <div class="session-card fade-in" data-delay="0">
-            <div class="session-card-inner">
-              <div class="session-tag">Private</div>
-              <h3 class="session-title">Private Healing<br />Session</h3>
-              <p class="session-duration">60 min &nbsp;·&nbsp; One-to-One</p>
-              <p class="session-desc">Deep one-to-one guided meditation, breathwork and restorative practices tailored entirely to your needs and intentions.</p>
-              <a href="#contact" class="btn-session">Book Session &rarr;</a>
-            </div>
+        <div class="journey-steps">
+          <div class="journey-step fade-in" data-delay="0">
+            <div class="journey-step-number">1</div>
+            <h3 class="journey-step-title">Connect</h3>
+            <p class="journey-step-text">We begin by understanding your needs, concerns and personal wellness goals — creating a foundation built on trust.</p>
           </div>
-          <div class="session-card session-card--mid fade-in" data-delay="100">
-            <div class="session-card-inner">
-              <div class="session-tag">Group</div>
-              <h3 class="session-title">Small Group<br />Meditation</h3>
-              <p class="session-duration">75 min &nbsp;·&nbsp; Up to 8 guests</p>
-              <p class="session-desc">A peaceful shared experience focused on breath, presence and emotional balance. Connection through collective stillness.</p>
-              <a href="#contact" class="btn-session">Book Session &rarr;</a>
-            </div>
+          <div class="journey-step fade-in" data-delay="120">
+            <div class="journey-step-number">2</div>
+            <h3 class="journey-step-title">Heal</h3>
+            <p class="journey-step-text">Create space for relaxation, self-awareness and positive change through personalised healing sessions.</p>
           </div>
-          <div class="session-card fade-in" data-delay="200">
-            <div class="session-card-inner">
-              <div class="session-tag">Immersive</div>
-              <h3 class="session-title">Sound &amp;<br />Stillness</h3>
-              <p class="session-duration">90 min &nbsp;·&nbsp; All levels</p>
-              <p class="session-desc">Immersive sound healing combined with meditation and deep relaxation. Let vibration guide you into profound rest.</p>
-              <a href="#contact" class="btn-session">Book Session &rarr;</a>
-            </div>
+          <div class="journey-step fade-in" data-delay="240">
+            <div class="journey-step-number">3</div>
+            <h3 class="journey-step-title">Balance</h3>
+            <p class="journey-step-text">Develop practices and insights that support greater harmony, emotional stability and clarity in everyday life.</p>
           </div>
-          <div class="session-card fade-in" data-delay="300">
-            <div class="session-card-inner">
-              <div class="session-tag">Journey</div>
-              <h3 class="session-title">Inner Light<br />Journey</h3>
-              <p class="session-duration">120 min &nbsp;·&nbsp; Deep experience</p>
-              <p class="session-desc">A reflective guided experience focused on reconnecting with yourself — your clarity, your calm, your inner knowing.</p>
-              <a href="#contact" class="btn-session">Book Session &rarr;</a>
-            </div>
+          <div class="journey-step fade-in" data-delay="360">
+            <div class="journey-step-number">4</div>
+            <h3 class="journey-step-title">Wellness</h3>
+            <p class="journey-step-text">Build sustainable, positive habits that support your ongoing wellbeing — long after each session ends.</p>
           </div>
         </div>
-        <div class="sessions-footer fade-in">
-          <p class="sessions-note"><em>Enjoy 20% off your first private or group session.</em></p>
-          <a href="#programs" class="btn-text-link">View All Offerings &rarr;</a>
+        <div class="journey-quote fade-in">
+          <blockquote>&ldquo;Small changes can create meaningful transformation.&rdquo;</blockquote>
         </div>
       </div>
     </section>
 
-    <!-- ═══════════════════════════════ INNER LIGHT ═══════════════════════════════ -->
-    <section class="inner-light-section" id="space">
-      <div class="inner-light-bg">
-        <img src="assets/inner_light_image.jpg" alt="Person meditating in golden light" class="inner-light-img" loading="lazy" />
-        <div class="inner-light-overlay"></div>
-        <div class="inner-light-glow"></div>
-      </div>
-      <div class="inner-light-content fade-in">
-        <p class="eyebrow eyebrow--light">Inner Light</p>
-        <h2 class="inner-light-headline">There is a quiet<br /><em>light within you.</em></h2>
-        <p class="inner-light-body">Beneath the noise, the stress, and the constant movement of the modern world — there is a quieter place within you. A place of awareness, calm and presence. It has never left. It is waiting to be remembered.</p>
-        <a href="#contact" class="btn-primary btn-primary--light">Begin Your Journey &rarr;</a>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════ QUOTE ═══════════════════════════════ -->
-    <section class="quote-section">
-      <div class="section-inner quote-inner">
-        <div class="quote-botanical quote-botanical--left">
-          <svg viewBox="0 0 120 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M60 280 Q55 240 50 200 Q45 160 30 130 Q15 100 20 60 Q25 30 40 10" stroke="#D6B4FF" stroke-width="1.2" fill="none" opacity="0.75"/>
-            <path d="M55 220 Q40 210 25 220 Q10 230 15 245" stroke="#D6B4FF" stroke-width="1" fill="none" opacity="0.6"/>
-            <path d="M48 170 Q30 155 20 165 Q8 175 12 188" stroke="#D6B4FF" stroke-width="1" fill="none" opacity="0.6"/>
-            <path d="M35 115 Q20 100 25 85 Q30 70 45 72" stroke="#D6B4FF" stroke-width="1" fill="none" opacity="0.5"/>
-            <ellipse cx="25" cy="245" rx="12" ry="6" fill="#E6D0FF" opacity="0.3" transform="rotate(-20 25 245)"/>
-            <ellipse cx="14" cy="178" rx="10" ry="5" fill="#E6D0FF" opacity="0.3" transform="rotate(-30 14 178)"/>
-          </svg>
-        </div>
-        <blockquote class="quote-text fade-in">
-          <span class="quote-mark">&ldquo;</span>
-          Healing begins when we give ourselves permission<br class="quote-break" /> to slow down and listen within.
-          <span class="quote-mark quote-mark--close">&rdquo;</span>
-        </blockquote>
-        <div class="quote-botanical quote-botanical--right">
-          <svg viewBox="0 0 120 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M60 20 Q65 60 70 100 Q75 140 90 170 Q105 200 100 240 Q95 270 80 290" stroke="#D6B4FF" stroke-width="1.2" fill="none" opacity="0.75"/>
-            <path d="M65 90 Q80 80 95 90 Q108 100 104 115" stroke="#D6B4FF" stroke-width="1" fill="none" opacity="0.6"/>
-            <path d="M72 145 Q90 132 100 143 Q112 155 107 168" stroke="#D6B4FF" stroke-width="1" fill="none" opacity="0.6"/>
-            <path d="M85 188 Q100 175 95 160 Q90 145 75 146" stroke="#D6B4FF" stroke-width="1" fill="none" opacity="0.5"/>
-            <ellipse cx="95" cy="110" rx="12" ry="6" fill="#E6D0FF" opacity="0.3" transform="rotate(20 95 110)"/>
-            <ellipse cx="106" cy="165" rx="10" ry="5" fill="#E6D0FF" opacity="0.3" transform="rotate(30 106 165)"/>
-          </svg>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════ RETREATS ═══════════════════════════════ -->
-    <section class="retreats-section" id="retreats">
+    <!-- ═══════════════════════════════ WHY US ═══════════════════════════════ -->
+    <section class="why-section" id="why-us">
       <div class="section-inner">
-        <div class="retreats-header fade-in">
-          <p class="eyebrow">Deeper Immersions</p>
-          <h2 class="section-headline">Retreats &amp; Programs</h2>
-          <p class="retreats-intro">For those seeking a deeper transformation — longer experiences designed to gently dissolve what is held and reconnect you with what is essential.</p>
+        <div class="why-header fade-in">
+          <p class="eyebrow">Why Universe Healing Haven</p>
+          <h2 class="section-headline">A Place Where<br /><em>You Matter</em></h2>
         </div>
-        <div class="retreats-grid">
-          <div class="retreat-card fade-in" data-delay="0">
-            <div class="retreat-img-wrap">
-              <img src="assets/retreat_image.jpg" alt="Stillness Weekend retreat in nature" class="retreat-img" loading="lazy" />
-              <div class="retreat-img-overlay"></div>
+        <div class="why-grid">
+          <div class="why-card fade-in" data-delay="0">
+            <div class="why-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2 L12 22 M7 7 Q12 2 17 7 M7 17 Q12 22 17 17" stroke="#a89868" stroke-width="1.3" fill="none"/>
+                <circle cx="12" cy="12" r="3" stroke="#c8b68e" stroke-width="1.2" fill="rgba(200,182,142,0.15)"/>
+              </svg>
             </div>
-            <div class="retreat-content">
-              <span class="retreat-badge">Weekend</span>
-              <h3 class="retreat-title">Stillness Weekend</h3>
-              <p class="retreat-desc">A restorative retreat for slowing down, breathing deeply and reconnecting with yourself amid peaceful natural surroundings.</p>
-              <a href="#contact" class="btn-text-link">Enquire &rarr;</a>
-            </div>
+            <h3 class="why-title">Personalised Care</h3>
+            <p class="why-text">Every person's journey is different. Our sessions are thoughtfully adapted to your individual needs, pace and personal goals.</p>
           </div>
-          <div class="retreat-card fade-in" data-delay="150">
-            <div class="retreat-img-wrap retreat-img-wrap--gradient" style="background: linear-gradient(135deg, #efe2fc 0%, #e6d0ff 50%, #d6b4ff 100%);">
-              <div class="retreat-pattern-art">
-                <svg viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="retreat-svg-art">
-                  <circle cx="150" cy="100" r="70" stroke="#7b4eb2" stroke-width="1" fill="none" opacity="0.4"/>
-                  <circle cx="150" cy="100" r="50" stroke="#7b4eb2" stroke-width="1" fill="none" opacity="0.3"/>
-                  <circle cx="150" cy="100" r="30" stroke="#7b4eb2" stroke-width="1" fill="none" opacity="0.2"/>
-                  <path d="M80 100 Q150 40 220 100 Q150 160 80 100" stroke="#7b4eb2" stroke-width="1.2" fill="none" opacity="0.5"/>
-                  <line x1="150" y1="30" x2="150" y2="170" stroke="#7b4eb2" stroke-width="0.8" opacity="0.35"/>
-                  <line x1="80" y1="100" x2="220" y2="100" stroke="#7b4eb2" stroke-width="0.8" opacity="0.35"/>
-                </svg>
-              </div>
-              <div class="retreat-img-overlay"></div>
+          <div class="why-card fade-in" data-delay="100">
+            <div class="why-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="#a89868" stroke-width="1.3" fill="none"/>
+                <circle cx="12" cy="12" r="4" stroke="#c8b68e" stroke-width="1" fill="none"/>
+                <circle cx="12" cy="12" r="1" fill="#c8b68e"/>
+              </svg>
             </div>
-            <div class="retreat-content">
-              <span class="retreat-badge">Multi-Week</span>
-              <h3 class="retreat-title">Inner Balance</h3>
-              <p class="retreat-desc">A guided multi-week journey through meditation, breathwork and mindful living. A complete reset for mind, body and spirit.</p>
-              <a href="#contact" class="btn-text-link">Enquire &rarr;</a>
-            </div>
+            <h3 class="why-title">Holistic Approach</h3>
+            <p class="why-text">We focus on your complete wellbeing — mind, body and spirit — rather than addressing health as a single, isolated area.</p>
           </div>
-          <div class="retreat-card fade-in" data-delay="300">
-            <div class="retreat-img-wrap retreat-img-wrap--gradient" style="background: linear-gradient(135deg, #f7f1ff 0%, #ecdcfc 50%, #debdfc 100%);">
-              <div class="retreat-pattern-art">
-                <svg viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="retreat-svg-art">
-                  <path d="M150 170 Q100 140 80 100 Q60 60 100 40 Q130 25 150 30 Q170 25 200 40 Q240 60 220 100 Q200 140 150 170Z" stroke="#7b4eb2" stroke-width="1.2" fill="none" opacity="0.45"/>
-                  <circle cx="150" cy="90" r="20" stroke="#7b4eb2" stroke-width="1" fill="none" opacity="0.5"/>
-                  <line x1="150" y1="30" x2="150" y2="50" stroke="#7b4eb2" stroke-width="1.2" opacity="0.45"/>
-                  <line x1="150" y1="130" x2="150" y2="165" stroke="#7b4eb2" stroke-width="1.2" opacity="0.45"/>
-                  <path d="M120 60 Q140 45 150 50" stroke="#7b4eb2" stroke-width="1" fill="none" opacity="0.35"/>
-                  <path d="M180 60 Q160 45 150 50" stroke="#7b4eb2" stroke-width="1" fill="none" opacity="0.35"/>
-                </svg>
-              </div>
-              <div class="retreat-img-overlay"></div>
+          <div class="why-card fade-in" data-delay="200">
+            <div class="why-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 20 Q12 4 20 20" stroke="#a89868" stroke-width="1.3" fill="none"/>
+                <line x1="12" y1="8" x2="12" y2="16" stroke="#c8b68e" stroke-width="1.2"/>
+                <circle cx="12" cy="6" r="1.5" fill="rgba(200,182,142,0.3)" stroke="#c8b68e" stroke-width="1"/>
+              </svg>
             </div>
-            <div class="retreat-content">
-              <span class="retreat-badge">Daily Practice</span>
-              <h3 class="retreat-title">Morning Light</h3>
-              <p class="retreat-desc">A gentle daily practice for starting your mornings with clarity and intention. Begin each day from a place of quiet presence.</p>
-              <a href="#contact" class="btn-text-link">Enquire &rarr;</a>
+            <h3 class="why-title">Peaceful Environment</h3>
+            <p class="why-text">A warm and welcoming space where you can slow down, feel safe, reconnect with yourself and focus entirely on your wellbeing.</p>
+          </div>
+          <div class="why-card fade-in" data-delay="300">
+            <div class="why-icon">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 18 L8 14 L12 16 L16 10 L20 6" stroke="#a89868" stroke-width="1.3" fill="none"/>
+                <circle cx="20" cy="6" r="2" fill="rgba(200,182,142,0.3)" stroke="#c8b68e" stroke-width="1"/>
+                <path d="M17 6 L20 6 L20 9" stroke="#c8b68e" stroke-width="1"/>
+              </svg>
             </div>
+            <h3 class="why-title">Continuous Growth</h3>
+            <p class="why-text">We encourage practical wellness habits that can gradually become a natural, sustainable part of your everyday life.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ═══════════════════════════════ TESTIMONIALS ═══════════════════════════════ -->
-    <section class="testimonials-section">
+    <!-- ═══════════════════════════════ MAJOR EVENTS ═══════════════════════════════ -->
+    <section class="events-section" id="events">
+      <div class="events-inner-light" aria-hidden="true"></div>
       <div class="section-inner">
-        <div class="testimonials-header fade-in">
-          <p class="eyebrow">In Their Words</p>
-          <h2 class="section-headline">Quiet Reflections</h2>
+        <div class="events-header fade-in">
+          <p class="eyebrow" style="color: #9B7DD4;">Upcoming</p>
+          <h2 class="section-headline">Major <em>Events</em></h2>
+          <p class="events-intro">Explore the upcoming international conferences and academic events hosted and associated with our community.</p>
         </div>
-        <div class="testimonials-track-wrap">
-          <div class="testimonials-track" id="testimonials-track">
-            <article class="testimonial-card fade-in" data-delay="0">
-              <div class="testimonial-quote-mark">&ldquo;</div>
-              <p class="testimonial-text">I arrived feeling overwhelmed and left feeling as though I could finally breathe again. There is something quietly transformative about this space.</p>
-              <div class="testimonial-author">
-                <div class="testimonial-author-dot"></div>
-                <span>Maya L. &mdash; Private Session</span>
-              </div>
-            </article>
-            <article class="testimonial-card fade-in" data-delay="100">
-              <div class="testimonial-quote-mark">&ldquo;</div>
-              <p class="testimonial-text">The space itself feels like a deep exhale. I didn&rsquo;t realize how much I needed stillness until I found it here. I return every week now.</p>
-              <div class="testimonial-author">
-                <div class="testimonial-author-dot"></div>
-                <span>Seren H. &mdash; Sound &amp; Stillness</span>
-              </div>
-            </article>
-            <article class="testimonial-card fade-in" data-delay="200">
-              <div class="testimonial-quote-mark">&ldquo;</div>
-              <p class="testimonial-text">I found a sense of quiet I didn&rsquo;t realize I had been missing. The Inner Light Journey gave me something I will carry with me for a very long time.</p>
-              <div class="testimonial-author">
-                <div class="testimonial-author-dot"></div>
-                <span>Elara T. &mdash; Inner Light Journey</span>
-              </div>
-            </article>
-            <article class="testimonial-card fade-in" data-delay="300">
-              <div class="testimonial-quote-mark">&ldquo;</div>
-              <p class="testimonial-text">SĀVA has become my sanctuary. A place where I reconnect with myself. Every session leaves me clearer, softer, more at peace with whatever I am carrying.</p>
-              <div class="testimonial-author">
-                <div class="testimonial-author-dot"></div>
-                <span>Nadia V. &mdash; Stillness Weekend</span>
-              </div>
-            </article>
-          </div>
-        </div>
-        <div class="testimonial-dots" id="testimonial-dots">
-          <button class="t-dot t-dot--active" data-index="0" aria-label="Testimonial 1"></button>
-          <button class="t-dot" data-index="1" aria-label="Testimonial 2"></button>
-          <button class="t-dot" data-index="2" aria-label="Testimonial 3"></button>
-          <button class="t-dot" data-index="3" aria-label="Testimonial 4"></button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════════════════════════ JOURNAL ═══════════════════════════════ -->
-    <section class="journal-section" id="journal">
-      <div class="section-inner">
-        <div class="journal-header fade-in">
-          <p class="eyebrow">Quiet Reading</p>
-          <h2 class="section-headline">From the Journal</h2>
-        </div>
-        <div class="journal-grid">
-          <article class="journal-card journal-card--large fade-in" data-delay="0">
-            <div class="journal-img-wrap">
-              <img src="assets/journal_image_1.jpg" alt="Hands holding ceramic cup of herbal tea" class="journal-img" loading="lazy" />
-            </div>
-            <div class="journal-content">
-              <span class="journal-tag">Slow Living</span>
-              <h3 class="journal-title">The Art of Slowing Down</h3>
-              <p class="journal-excerpt">In a world designed for speed, choosing slowness is a radical act of self-care. Here is how to begin.</p>
-              <a href="#journal" class="btn-text-link">Read More &rarr;</a>
-            </div>
-          </article>
-          <div class="journal-stack">
-            <article class="journal-card journal-card--small fade-in" data-delay="100">
-              <div class="journal-img-wrap journal-img-wrap--small">
-                <img src="assets/journal_image_2.jpg" alt="Person meditating by window with pampas grass" class="journal-img" loading="lazy" />
-              </div>
-              <div class="journal-content">
-                <span class="journal-tag">Breathwork</span>
-                <h3 class="journal-title">5 Minutes to Return to Your Breath</h3>
-                <p class="journal-excerpt">A simple practice for any moment when the world feels too loud.</p>
-                <a href="#journal" class="btn-text-link">Read More &rarr;</a>
-              </div>
-            </article>
-            <article class="journal-card journal-card--small fade-in" data-delay="200">
-              <div class="journal-content journal-content--no-img">
-                <span class="journal-tag">Ritual</span>
-                <h3 class="journal-title">Creating a Ritual of Stillness</h3>
-                <p class="journal-excerpt">Small, intentional moments woven into the fabric of your day can become the foundation of a deeply peaceful life.</p>
-                <a href="#journal" class="btn-text-link">Read More &rarr;</a>
-              </div>
-            </article>
-            <article class="journal-card journal-card--small fade-in" data-delay="300">
-              <div class="journal-content journal-content--no-img">
-                <span class="journal-tag">Reflection</span>
-                <h3 class="journal-title">What Does Inner Peace Really Feel Like?</h3>
-                <p class="journal-excerpt">Exploring the quieter, more honest experience of peace — beyond what we are taught it should feel like.</p>
-                <a href="#journal" class="btn-text-link">Read More &rarr;</a>
-              </div>
-            </article>
-          </div>
+        <!-- Events are rendered dynamically by app.js via the majorEvents data array -->
+        <div class="events-list" id="events-list"></div>
+        <!-- Empty state shown when no events -->
+        <div class="events-empty" id="events-empty" style="display:none;">
+          <p class="events-empty-text">No upcoming events at the moment. Please check back soon.</p>
         </div>
       </div>
     </section>
 
     <!-- ═══════════════════════════════ FOUNDER ═══════════════════════════════ -->
     <section class="founder-section" id="founder">
+      <!-- Subtle inner light glow -->
+      <div class="founder-inner-light" aria-hidden="true"></div>
       <div class="section-inner founder-inner">
         <div class="founder-image-col fade-in">
           <div class="founder-image-wrap">
             <div class="founder-curve-bg"></div>
             <div class="founder-frame">
-              <img src="assets/founder.jpeg" alt="Jennifer John, Founder &amp; Healing Guide" class="founder-img" loading="lazy" />
+              <img src="founder.jpeg" alt="Jennifer John — Founder of Universe Healing Haven" class="founder-img" loading="lazy" />
             </div>
-            <!-- Decorative organic curved line around image -->
-            <svg class="founder-decorative-curve" viewBox="0 0 200 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 270 Q40 180 80 140 Q130 90 170 30" stroke="#D6B4FF" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.8"/>
-              <circle cx="170" cy="30" r="3.5" fill="#C396FC"/>
+            <!-- Thin organic decorative curve -->
+            <svg class="founder-decorative-curve" viewBox="0 0 120 280" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M60 0 Q20 70 80 140 Q110 180 50 230 Q30 260 60 280" stroke="#D6B4FF" stroke-width="1.2" fill="none" opacity="0.5"/>
             </svg>
             <div class="founder-float-tag">
               <span class="founder-tag-name">Jennifer John</span>
@@ -451,77 +458,140 @@
             </div>
           </div>
         </div>
-
-        <div class="founder-text-col fade-in" data-delay="150">
-          <p class="eyebrow">Meet the Founder</p>
-          <h2 class="founder-headline">A Journey Back<br /><em>to Within</em></h2>
-          <div class="founder-role-badge">Founder &amp; Healing Guide</div>
-
-          <div class="founder-body-copy">
-            <p>Jennifer John founded this space from a simple belief &mdash; that within each of us is a quiet place of peace, clarity and inner light.</p>
-            <p>Her work is rooted in creating a safe and nurturing environment where people can slow down, reconnect with themselves and begin their own journey of healing and inner balance.</p>
-            <p>Through meditation, energy-based healing and mindful practices, Jennifer gently guides individuals toward greater awareness, calm and connection.</p>
-          </div>
-
-          <div class="founder-quote-box">
+        <div class="founder-text-col">
+          <p class="eyebrow fade-in" data-delay="0" style="color: #C396FC;">Meet the Founder</p>
+          <h2 class="section-headline fade-in" data-delay="80">Jennifer<br /><em>John</em></h2>
+          <p class="founder-subtitle fade-in" data-delay="160">Founder &amp; Healing Guide</p>
+          <p class="founder-body fade-in" data-delay="240">Jennifer John created Universe Healing Haven with a simple intention — to create a peaceful space where people can pause, reconnect with themselves and make room for healing.</p>
+          <p class="founder-body fade-in" data-delay="320" style="margin-top:0;">Through meditation, energy-based healing and mindful practices, she offers a gentle space for people to slow down, find balance and reconnect with their inner sense of peace.</p>
+          <div class="founder-quote-box fade-in" data-delay="400">
             <div class="founder-quote-line"></div>
-            <div class="founder-quote-content">
-              <blockquote class="founder-quote-text">&ldquo;Healing begins when we become still enough to listen within.&rdquo;</blockquote>
-              <cite class="founder-quote-author">&mdash; Jennifer John</cite>
-            </div>
+            <blockquote class="founder-quote-text">&ldquo;A space to pause, breathe and return to yourself.&rdquo;</blockquote>
           </div>
+          <a href="#contact" class="btn-text-link founder-cta fade-in" data-delay="480">Know More &rarr;</a>
+        </div>
+      </div>
+    </section>
 
-          <div class="founder-cta-wrap">
-            <a href="#contact" class="btn-primary">Meet Jennifer &rarr;</a>
+    <!-- ═══════════════════════════════ CALL TO ACTION ═══════════════════════════════ -->
+    <section class="cta-section">
+      <div class="cta-bg">
+        <img src="assets/cta_wellness.jpg" alt="Peaceful zen garden with soft light" loading="lazy" />
+        <div class="cta-overlay"></div>
+      </div>
+      <div class="section-inner">
+        <div class="cta-content fade-in">
+          <h2 class="cta-headline">
+            You deserve time to <em>pause.</em><br />
+            You deserve to feel <em>balanced.</em><br />
+            You deserve to feel <em>well.</em>
+          </h2>
+          <p class="cta-sub">Take the first step towards greater harmony and wellbeing. We are here whenever you are ready.</p>
+          <div class="cta-buttons">
+            <a href="#contact" class="btn-cta-primary">Book a Session &rarr;</a>
+            <a href="#contact" class="btn-cta-outline">Contact Us</a>
           </div>
         </div>
       </div>
-
-      <!-- Organic background curve -->
-      <svg class="founder-bg-shape" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M480 300 Q400 450 250 480 Q100 510 50 380 Q0 250 80 120 Q160 -10 320 20 Q480 50 480 300Z" fill="#D6B4FF" opacity="0.3"/>
-      </svg>
     </section>
 
-    <!-- ═══════════════════════════════ BOOKING ═══════════════════════════════ -->
-    <section class="booking-section" id="contact">
-      <div class="section-inner booking-inner">
-        <div class="booking-text fade-in">
-          <p class="eyebrow">Begin</p>
-          <h2 class="booking-headline">Begin Where<br />You Are.</h2>
-          <p class="booking-sub">Your journey does not need to begin perfectly.<br />It only needs to begin.</p>
-          <div class="booking-divider"></div>
-          <p class="booking-note">All sessions are held at our studio in a private, calm and welcoming space. We look forward to welcoming you.</p>
+    <!-- ═══════════════════════════════ CONTACT ═══════════════════════════════ -->
+    <section class="contact-section" id="contact">
+      <div class="section-inner contact-inner">
+        <div class="contact-info fade-in">
+          <p class="eyebrow">Get in Touch</p>
+          <h2 class="section-headline">Begin Where<br /><em>You Are.</em></h2>
+          <p class="contact-body">Your journey does not need to begin perfectly — it only needs to begin. Whether you have questions, would like to learn more about our services or are ready to book your first session, we would love to hear from you.</p>
+
+          <ul class="contact-details">
+            <li class="contact-detail-item">
+              <div class="contact-detail-icon">
+                <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5z" stroke="#6b7d5e" stroke-width="1.2" fill="none"/>
+                  <path d="M7 10l2 2 4-4" stroke="#6b7d5e" stroke-width="1.3"/>
+                </svg>
+              </div>
+              <div class="contact-detail-content">
+                <span class="contact-detail-label">Phone / WhatsApp</span>
+                <span class="contact-detail-value"><a href="tel:+917207960077">+91 7207960077</a></span>
+              </div>
+            </li>
+            <li class="contact-detail-item">
+              <div class="contact-detail-icon">
+                <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="10" cy="10" r="8" stroke="#6b7d5e" stroke-width="1.2" fill="none"/>
+                  <path d="M2 10h16 M10 2a15 15 0 010 16 M10 2a15 15 0 000 16" stroke="#6b7d5e" stroke-width="1"/>
+                </svg>
+              </div>
+              <div class="contact-detail-content">
+                <span class="contact-detail-label">Website</span>
+                <span class="contact-detail-value"><a href="https://universehealinghaven.in" target="_blank" rel="noopener">universehealinghaven.in</a></span>
+              </div>
+            </li>
+          </ul>
+
+          <div class="contact-social">
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/universe_healing_center?utm_source=qr&igsh=d3Jrejk5ZndkZHhl" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="18" cy="6" r="1.2" fill="currentColor"/></svg>
+            </a>
+            <!-- WhatsApp -->
+            <a href="https://wa.me/917207960077" target="_blank" rel="noopener" class="social-link" aria-label="WhatsApp">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="currentColor"/><path d="M12 2C6.486 2 2 6.486 2 12c0 1.885.522 3.647 1.427 5.155L2.06 22.574a.5.5 0 00.608.608l5.407-1.367A9.953 9.953 0 0012 22c5.514 0 10-4.486 10-10S17.514 2 12 2z" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>
+            </a>
+          </div>
         </div>
-        <div class="booking-form-wrap fade-in" data-delay="150">
+
+        <div class="contact-form-wrap fade-in" data-delay="150">
           <form class="booking-form" id="booking-form" novalidate>
-            <div class="form-group">
-              <label for="fullName" class="form-label">Full Name</label>
-              <input type="text" id="fullName" name="fullName" class="form-input" placeholder="Your name" autocomplete="name" required />
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fullName" class="form-label">Full Name</label>
+                <input type="text" id="fullName" name="fullName" class="form-input" placeholder="Your name" autocomplete="name" required />
+              </div>
+              <div class="form-group">
+                <label for="phone" class="form-label">Phone / WhatsApp</label>
+                <input type="tel" id="phone" name="phone" class="form-input" placeholder="+91 72079 60077" autocomplete="tel" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="your@email.com" autocomplete="email" required />
+              </div>
+              <div class="form-group">
+                <label for="location" class="form-label">Location</label>
+                <input type="text" id="location" name="location" class="form-input" placeholder="City / Country" />
+              </div>
             </div>
             <div class="form-group">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" id="email" name="email" class="form-input" placeholder="your@email.com" autocomplete="email" required />
-            </div>
-            <div class="form-group">
-              <label for="experience" class="form-label">Preferred Experience</label>
+              <label for="service" class="form-label">Preferred Service</label>
               <div class="form-select-wrap">
-                <select id="experience" name="experience" class="form-input form-select" required>
-                  <option value="" disabled selected>Choose your experience</option>
-                  <option value="private">Private Healing Session</option>
-                  <option value="group">Small Group Meditation</option>
-                  <option value="sound">Sound &amp; Stillness</option>
-                  <option value="inner-light">Inner Light Journey</option>
-                  <option value="stillness-weekend">Stillness Weekend Retreat</option>
-                  <option value="inner-balance">Inner Balance Program</option>
-                  <option value="morning-light">Morning Light Practice</option>
+                <select id="service" name="service" class="form-input form-select" required>
+                  <option value="" disabled selected>Choose a service</option>
+                  <option value="energy-healing">Energy Healing</option>
+                  <option value="meditation">Meditation &amp; Mindfulness</option>
+                  <option value="stress-management">Stress Management</option>
+                  <option value="sleep-relaxation">Sleep &amp; Relaxation</option>
+                  <option value="emotional-wellness">Emotional Wellness</option>
+                  <option value="kids-wellness">Kids Wellness &amp; Super Brain Yoga</option>
+                  <option value="general-consultation">General Wellness Consultation</option>
                 </select>
                 <span class="select-arrow">&#8595;</span>
               </div>
             </div>
             <div class="form-group">
-              <label for="preferredDate" class="form-label">Preferred Date</label>
-              <input type="date" id="preferredDate" name="preferredDate" class="form-input" />
+              <label class="form-label">Preferred Session Type</label>
+              <div class="form-radio-group">
+                <label class="form-radio-label">
+                  <input type="radio" name="sessionType" value="online" />
+                  <span>Online</span>
+                </label>
+                <label class="form-radio-label">
+                  <input type="radio" name="sessionType" value="in-person" />
+                  <span>In-Person</span>
+                </label>
+              </div>
             </div>
             <div class="form-group">
               <label for="message" class="form-label">Message <span class="form-optional">(optional)</span></label>
@@ -529,7 +599,7 @@
             </div>
             <button type="submit" class="btn-submit" id="submit-btn">Begin Your Journey &rarr;</button>
             <div class="form-success" id="form-success">
-              <p>Thank you. We will be in touch soon. &nbsp;<em>Breathe.</em></p>
+              <p>Thank you for reaching out. We will be in touch soon. &nbsp;<em>Breathe.</em></p>
             </div>
           </form>
         </div>
@@ -542,34 +612,47 @@
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-top">
-        <div class="footer-logo">
-          <img src="logob.png" alt="SĀVA Studio Logo" class="footer-logo-img" />
-          <p class="footer-tagline">A space to breathe.<br />A place to return to yourself.</p>
+        <div class="footer-brand">
+          <img src="logow.png" alt="Universe Healing Haven Logo" class="footer-logo-img" />
+          <p class="footer-tagline">Heal &nbsp;·&nbsp; Balance &nbsp;·&nbsp; Wellness<br />A peaceful space for your wellbeing journey.</p>
         </div>
-        <nav class="footer-nav">
-          <a href="#about" class="footer-nav-link">About</a>
-          <a href="#programs" class="footer-nav-link">Programs</a>
-          <a href="#space" class="footer-nav-link">Our Space</a>
-          <a href="#journal" class="footer-nav-link">Journal</a>
-          <a href="#contact" class="footer-nav-link">Contact</a>
+        <nav class="footer-nav-col">
+          <p class="footer-heading">Navigate</p>
+          <div class="footer-nav">
+            <a href="#home" class="footer-nav-link">Home</a>
+            <a href="#about" class="footer-nav-link">About</a>
+            <a href="#services" class="footer-nav-link">Services</a>
+            <a href="#wellness" class="footer-nav-link">Wellness Support</a>
+            <a href="#events" class="footer-nav-link">Events</a>
+            <a href="#contact" class="footer-nav-link">Contact</a>
+          </div>
         </nav>
         <div class="footer-connect">
-          <p class="footer-connect-title">Connect</p>
-          <a href="#" class="footer-social-link">Instagram</a>
-          <a href="mailto:hello@savastudio.com" class="footer-social-link">Email Us</a>
+          <p class="footer-heading">Connect</p>
+          <a href="https://www.instagram.com/universe_healing_center?utm_source=qr&igsh=d3Jrejk5ZndkZHhl" target="_blank" rel="noopener" class="footer-social-link">Instagram</a>
+          <a href="https://wa.me/917207960077" target="_blank" rel="noopener" class="footer-social-link">WhatsApp</a>
         </div>
       </div>
       <div class="footer-bottom">
-        <p class="footer-copy">&copy; 2026 Universe healing haven .all rights reserved</p>
+        <p class="footer-copy">&copy; 2026 Universe Healing Haven. All rights reserved.</p>
+        <p class="footer-disclaimer">Our services are complementary wellness practices and are not intended to replace medical diagnosis, treatment or prescribed medication.</p>
       </div>
     </div>
     <div class="footer-botanical">
       <svg viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0 80 Q50 40 100 60 Q150 80 200 50 Q250 20 300 45 Q350 70 400 40" stroke="#D6B4FF" stroke-width="1" fill="none" opacity="0.6"/>
-        <path d="M0 95 Q60 70 120 80 Q180 90 240 65 Q300 40 360 60 Q390 70 400 60" stroke="#E6D0FF" stroke-width="0.8" fill="none" opacity="0.45"/>
+        <path d="M0 80 Q50 40 100 60 Q150 80 200 50 Q250 20 300 45 Q350 70 400 40" stroke="#D6B4FF" stroke-width="1" fill="none" opacity="0.5"/>
+        <path d="M0 95 Q60 70 120 80 Q180 90 240 65 Q300 40 360 60 Q390 70 400 60" stroke="#E6D0FF" stroke-width="0.8" fill="none" opacity="0.35"/>
       </svg>
     </div>
   </footer>
+
+  <!-- ═══════════════════════════════ WHATSAPP FLOATING BUTTON ═══════════════════════════════ -->
+  <a href="https://wa.me/917207960077" target="_blank" rel="noopener" class="whatsapp-float" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+      <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.06 22.574a.5.5 0 00.608.608l5.406-1.378A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.66 0-3.216-.5-4.512-1.357l-.315-.196-3.268.855.855-3.268-.196-.315A7.953 7.953 0 014 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/>
+    </svg>
+  </a>
 
   <script src="app.js"></script>
 </body>
