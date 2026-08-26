@@ -1897,12 +1897,12 @@
       <div style="padding:8px 0; font-size:0.92rem; line-height:1.5;">
         <p style="margin-bottom:12px; color:var(--text-main);">Delete healing protocol <strong>${p.name} (${p.id})</strong>?</p>
         <div style="background-color:#fff1f2; border:1px solid #fecdd3; padding:12px; border-radius:6px; color:#9f1239; font-size:0.85rem;">
-          <strong>Notice:</strong> Protocol status will be set to Inactive, removing it from future assignments. Historical patient records referencing this protocol will remain intact.
+          <strong>Notice:</strong> This action will permanently remove the protocol from the active protocol library. Historical session logs referencing this protocol will retain their text records.
         </div>
       </div>
     `;
     showModal(`Delete Protocol — ${p.name}`, bodyHTML, () => {
-      db.update('protocols', protocolId, { status: 'inactive' });
+      db.delete('protocols', protocolId);
       closeModal();
       renderProtocols();
       return true;
@@ -2076,12 +2076,12 @@
       <div style="padding:8px 0; font-size:0.92rem; line-height:1.5;">
         <p style="margin-bottom:12px; color:var(--text-main);">Remove package variant <strong>${pkg.name} (${pkg.id})</strong>?</p>
         <div style="background-color:#fff1f2; border:1px solid #fecdd3; padding:12px; border-radius:6px; color:#9f1239; font-size:0.85rem;">
-          <strong>Notice:</strong> Package variant will be deactivated from future billing. Existing invoice and payment ledgers referencing this package will be preserved.
+          <strong>Notice:</strong> This action will permanently remove the package variant from active billing. Existing invoice and payment ledgers referencing this package will be preserved.
         </div>
       </div>
     `;
     showModal(`Delete Package — ${pkg.name}`, bodyHTML, () => {
-      db.update('packages', packageId, { status: 'inactive' });
+      db.delete('packages', packageId);
       closeModal();
       renderPackages();
       return true;
