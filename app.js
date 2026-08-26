@@ -379,7 +379,7 @@ const majorEvents = [
 • Message: ${messageVal}`;
 
       // Construct WhatsApp URL
-      const waUrl = `https://wa.me/917207960077?text=${encodeURIComponent(waText)}`;
+      const waUrl = `https://wa.me/919493132940?text=${encodeURIComponent(waText)}`;
 
       // Open WhatsApp immediately in new tab (avoids popup blockers)
       window.open(waUrl, '_blank');

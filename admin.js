@@ -27,17 +27,17 @@
   const SEED_SETTINGS = {
     organizationName: 'Universe Healing Haven',
     contactEmail: 'contact@universehealing.com',
-    contactPhone: '+91 72079 60077',
+    contactPhone: '+91 9493132940',
     defaultCommissionRate: 25,
-    referralSources: ['Super Admin 1', 'Super Admin 2', 'Super Admin 3', 'Social Media / Website'],
+    referralSources: [],
     allowHealersFinancialAccess: false
   };
 
   // ─── DATABASE STATE MANAGEMENT (LOCALSTORAGE ENGINE) ──────────────────
   class HealingDB {
     constructor() {
-      // Force database reset once for clean v4 setup (RBAC alignment)
-      if (!localStorage.getItem('hh_db_reset_v4')) {
+      // Force database reset once for clean v5 setup (Fully dynamic roles & referral system)
+      if (!localStorage.getItem('hh_db_reset_v5')) {
         this.resetDatabase();
       }
 
@@ -63,7 +63,7 @@
         'sessions', 'payments', 'commissions', 'events', 'contacts', 'logs', 'settings', 'content'
       ];
       keys.forEach(k => localStorage.removeItem('hh_db_' + k));
-      localStorage.setItem('hh_db_reset_v4', 'true');
+      localStorage.setItem('hh_db_reset_v5', 'true');
     }
 
     initStorage(key, seed) {
@@ -161,6 +161,32 @@
 
   function isSuperAdmin() {
     return state.currentUser && state.currentUser.role === 'Super Admin';
+  }
+
+  function getDynamicReferralSources() {
+    const users = db.get('users') || [];
+    const activeAdmins = users.filter(u => u.status === 'active' && (u.role === 'Super Admin' || u.role === 'Admin'));
+    const sources = activeAdmins.map(u => ({
+      id: u.id,
+      name: u.name,
+      role: u.role,
+      label: `${u.name} (${u.role})`
+    }));
+    sources.push({ id: 'REF_SOCIAL', name: 'Social Media / Website', role: 'External', label: 'Social Media / Website' });
+    return sources;
+  }
+
+  function resolveReferrerName(refVal, refUserId = null) {
+    if (refUserId) {
+      const u = (db.get('users') || []).find(usr => usr.id === refUserId);
+      if (u) return u.name;
+    }
+    if (refVal) {
+      const u = (db.get('users') || []).find(usr => usr.id === refVal || usr.name === refVal);
+      if (u) return u.name;
+      return refVal;
+    }
+    return 'Unspecified';
   }
 
   function login(username, password) {
@@ -867,19 +893,27 @@
 
     // Doughnut Chart: Referral distribution
     const ctxReferrals = document.getElementById('dashboard-referrals-chart').getContext('2d');
-    const patients = db.get('patients');
+    const patients = db.get('patients') || [];
 
-    // Count referrers
-    const referrers = ['Super Admin 1', 'Super Admin 2', 'Super Admin 3', 'Social Media / Website'];
-    const counts = referrers.map(ref => patients.filter(p => p.referredBy === ref).length);
+    // Count referrers dynamically
+    const referralSources = getDynamicReferralSources();
+    const labels = referralSources.map(s => s.name);
+    const counts = referralSources.map(s => {
+      return patients.filter(p => {
+        const refName = resolveReferrerName(p.referredBy, p.referredByUserId);
+        return refName === s.name || p.referredBy === s.name || p.referredByUserId === s.id;
+      }).length;
+    });
+
+    const palette = ['#9b7dd4', '#b8a0d6', '#e6d0ff', '#64748b', '#3b82f6', '#10b981', '#f59e0b'];
 
     new Chart(ctxReferrals, {
       type: 'doughnut',
       data: {
-        labels: referrers,
+        labels: labels,
         datasets: [{
           data: counts,
-          backgroundColor: ['#9b7dd4', '#b8a0d6', '#e6d0ff', '#64748b'],
+          backgroundColor: palette.slice(0, labels.length),
           borderWidth: 1
         }]
       },
@@ -893,20 +927,52 @@
     });
   }
 
-  // ─── PATIENT LIST VIEW ─────────────────────────────────────────────────
+  // ─── PATIENT LIST & REGISTER VIEW ──────────────────────────────────────
   function renderPatients() {
+    if (!state.activePatientTab) state.activePatientTab = 'database';
+
     const slot = document.getElementById('tab-specific-content');
     const actionsSlot = document.getElementById('page-header-actions-slot');
 
-    if (isSuperAdmin()) {
-      actionsSlot.innerHTML = `
-        <button class="btn btn-primary-admin" id="btn-add-patient-action">+ Add Patient</button>
-      `;
+    const allPatients = db.get('patients') || [];
+    const activeWorkingPatients = allPatients.filter(p => p.status === 'new' || p.status === 'active' || p.status === 'follow-up');
+    const registerPatients = allPatients.filter(p => p.status === 'completed' || p.status === 'closed');
+
+    let actionsHTML = '';
+    if (state.activePatientTab === 'database') {
+      if (isSuperAdmin()) {
+        actionsHTML += '<button class="btn btn-primary-admin" id="btn-add-patient-action">+ Add Patient</button> ';
+      }
+      actionsHTML += '<button class="btn btn-secondary-admin" id="btn-export-patient-csv">Export CSV</button>';
     } else {
-      actionsSlot.innerHTML = '';
+      actionsHTML += '<button class="btn btn-primary-admin" id="btn-export-register-csv">Export Register CSV</button>';
     }
+    actionsSlot.innerHTML = actionsHTML;
+
+    const dynamicRefSources = getDynamicReferralSources();
+
+    const statusOptionsHTML = state.activePatientTab === 'database' ? `
+      <option value="">All Database Statuses</option>
+      <option value="new">New</option>
+      <option value="active">Active</option>
+      <option value="follow-up">Follow-up</option>
+    ` : `
+      <option value="">All Register Statuses</option>
+      <option value="completed">Completed</option>
+      <option value="closed">Closed</option>
+    `;
 
     slot.innerHTML = `
+      <!-- Sub-tabs bar -->
+      <div style="display:flex; gap:12px; margin-bottom:16px;">
+        <button class="btn ${state.activePatientTab === 'database' ? 'btn-primary-admin' : 'btn-secondary-admin'}" id="btn-subtab-database" style="padding:8px 18px; font-weight:600;">
+          PATIENT DATABASE (${activeWorkingPatients.length})
+        </button>
+        <button class="btn ${state.activePatientTab === 'register' ? 'btn-primary-admin' : 'btn-secondary-admin'}" id="btn-subtab-register" style="padding:8px 18px; font-weight:600;">
+          REGISTER (${registerPatients.length})
+        </button>
+      </div>
+
       <!-- Filters bar -->
       <div class="filters-bar">
         <div class="filter-group">
@@ -916,23 +982,14 @@
         <div class="filter-group">
           <label>Case Status</label>
           <select id="patient-filter-status" class="form-select">
-            <option value="">All Statuses</option>
-            <option value="new">New</option>
-            <option value="active">Active</option>
-            <option value="follow-up">Follow-up</option>
-            <option value="completed">Completed</option>
-            <option value="closed">Closed</option>
-            <option value="inactive">Inactive</option>
+            ${statusOptionsHTML}
           </select>
         </div>
         <div class="filter-group">
           <label>Referrer</label>
           <select id="patient-filter-referrer" class="form-select">
             <option value="">All Referrers</option>
-            <option value="Super Admin 1">Super Admin 1</option>
-            <option value="Super Admin 2">Super Admin 2</option>
-            <option value="Super Admin 3">Super Admin 3</option>
-            <option value="Social Media / Website">Social Media / Website</option>
+            ${dynamicRefSources.map(ref => `<option value="${ref.id}">${ref.label}</option>`).join('')}
           </select>
         </div>
         <div class="filters-bar-actions">
@@ -942,6 +999,11 @@
 
       <!-- Main card table container -->
       <div class="card">
+        <div class="card-header" style="background-color:#fff;">
+          <span class="card-title" style="font-size:1.05rem; font-weight:700; color:var(--primary);">
+            ${state.activePatientTab === 'database' ? 'Active Working Patient Database' : 'Completed & Closed Patient Register'}
+          </span>
+        </div>
         <div class="card-body" style="padding:0;">
           <div class="table-responsive">
             <table class="data-table">
@@ -967,15 +1029,35 @@
           
           <!-- Pagination -->
           <div class="table-pagination">
-            <span id="patients-pagination-info">Showing 1 to 10 of 100 entries</span>
-            <div class="pagination-controls">
-              <button class="btn btn-secondary-admin btn-sm" id="btn-patient-prev" disabled>Previous</button>
-              <button class="btn btn-secondary-admin btn-sm" id="btn-patient-next" disabled>Next</button>
-            </div>
+            <span id="patients-pagination-info">Showing entries</span>
           </div>
         </div>
       </div>
     `;
+
+    // Hook subtab events
+    document.getElementById('btn-subtab-database').addEventListener('click', () => {
+      state.activePatientTab = 'database';
+      renderPatients();
+    });
+
+    document.getElementById('btn-subtab-register').addEventListener('click', () => {
+      state.activePatientTab = 'register';
+      renderPatients();
+    });
+
+    // Hook export CSV events
+    if (document.getElementById('btn-export-patient-csv')) {
+      document.getElementById('btn-export-patient-csv').addEventListener('click', () => {
+        exportPatientCSV('database');
+      });
+    }
+
+    if (document.getElementById('btn-export-register-csv')) {
+      document.getElementById('btn-export-register-csv').addEventListener('click', () => {
+        exportPatientCSV('register');
+      });
+    }
 
     // Hook events
     if (isSuperAdmin() && document.getElementById('btn-add-patient-action')) {
@@ -998,6 +1080,67 @@
     filterAndRenderPatients();
   }
 
+  function exportPatientCSV(tab) {
+    const allPatients = db.get('patients') || [];
+    const assignments = db.get('assignments') || [];
+    const healers = db.get('healers') || [];
+    const protocols = db.get('protocols') || [];
+    const sessions = db.get('sessions') || [];
+
+    let targetPatients = [];
+    if (tab === 'database') {
+      targetPatients = allPatients.filter(p => p.status === 'new' || p.status === 'active' || p.status === 'follow-up');
+    } else {
+      targetPatients = allPatients.filter(p => p.status === 'completed' || p.status === 'closed');
+    }
+
+    const headers = ['Patient ID', 'Patient Name', 'Gender', 'DOB', 'Phone', 'Email', 'Category', 'Main Concern', 'Status', 'Referred By', 'Assigned Healer', 'Protocol', 'Registration Date', 'Last Session Date'];
+    const rows = [headers];
+
+    targetPatients.forEach(p => {
+      const asg = assignments.find(a => a.patientId === p.id && a.status === 'active');
+      let healerName = 'Unassigned';
+      let protocolName = 'None';
+      if (asg) {
+        const hlr = healers.find(h => h.id === asg.primaryHealerId);
+        const prot = protocols.find(pr => pr.id === asg.protocolId);
+        if (hlr) healerName = hlr.name;
+        if (prot) protocolName = prot.name;
+      }
+      const patSessions = sessions.filter(s => s.patientId === p.id && s.status === 'completed');
+      patSessions.sort((a, b) => b.date.localeCompare(a.date));
+      const lastSession = patSessions.length > 0 ? patSessions[0].date : 'None';
+      const refName = resolveReferrerName(p.referredBy, p.referredByUserId);
+
+      rows.push([
+        `"${p.id}"`,
+        `"${p.name.replace(/"/g, '""')}"`,
+        `"${p.gender || ''}"`,
+        `"${p.dob || ''}"`,
+        `"${p.mobile || ''}"`,
+        `"${p.email || ''}"`,
+        `"${p.category || ''}"`,
+        `"${(p.concern || '').replace(/"/g, '""')}"`,
+        `"${p.status}"`,
+        `"${refName.replace(/"/g, '""')}"`,
+        `"${healerName.replace(/"/g, '""')}"`,
+        `"${protocolName.replace(/"/g, '""')}"`,
+        `"${p.registrationDate || ''}"`,
+        `"${lastSession}"`
+      ]);
+    });
+
+    const csvContent = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', tab === 'database' ? 'patient_database_export.csv' : 'patient_register_export.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   function filterAndRenderPatients() {
     const q = document.getElementById('patient-search-query').value.toLowerCase().trim();
     const status = document.getElementById('patient-filter-status').value;
@@ -1009,7 +1152,14 @@
     const protocols = db.get('protocols') || [];
     const sessions = db.get('sessions') || [];
 
-    // Apply filters
+    // Filter by subtab first
+    if (state.activePatientTab === 'database') {
+      patients = patients.filter(p => p.status === 'new' || p.status === 'active' || p.status === 'follow-up');
+    } else {
+      patients = patients.filter(p => p.status === 'completed' || p.status === 'closed');
+    }
+
+    // Apply search and filter inputs
     if (q) {
       patients = patients.filter(p =>
         p.id.toLowerCase().includes(q) ||
@@ -1021,7 +1171,10 @@
       patients = patients.filter(p => p.status === status);
     }
     if (ref) {
-      patients = patients.filter(p => p.referredBy === ref);
+      patients = patients.filter(p => {
+        const resolvedName = resolveReferrerName(p.referredBy, p.referredByUserId);
+        return p.referredByUserId === ref || p.referredBy === ref || resolvedName === ref;
+      });
     }
 
     // Sort: newest first
@@ -1055,6 +1208,8 @@
       patSessions.sort((a, b) => b.date.localeCompare(a.date));
       const lastSession = patSessions.length > 0 ? patSessions[0].date : '<span style="color:var(--text-light); font-style:italic;">No sessions</span>';
 
+      const resolvedReferrer = resolveReferrerName(p.referredBy, p.referredByUserId);
+
       const actionsHTML = isSuperAdmin() ? `
         <div class="table-actions" style="justify-content: flex-end;">
           <button class="btn-action-icon view-btn view-patient-profile-link" data-id="${p.id}" title="View Patient Profile">
@@ -1079,7 +1234,7 @@
           <td><a href="#" class="view-patient-profile-link" data-id="${p.id}" style="font-weight:600; color:var(--text-main);">${p.name}</a></td>
           <td>${p.mobile}</td>
           <td><span class="badge-category">${p.category}</span></td>
-          <td>${p.referredBy}</td>
+          <td>${resolvedReferrer}</td>
           <td>${healerName}</td>
           <td>${protocolName}</td>
           <td><span class="badge-status ${p.status}">${p.status}</span></td>
@@ -1514,6 +1669,7 @@
                       </td>
                       <td style="text-align:right;">
                         <button class="btn btn-secondary-admin btn-sm btn-edit-healer" data-id="${h.id}">${isSuperAdmin() ? 'Edit Info' : 'View Details'}</button>
+                        ${isSuperAdmin() ? `<button class="btn btn-secondary-admin btn-sm btn-delete-healer" data-id="${h.id}" style="color:var(--danger); border-color:#fca5a5;">Remove</button>` : ''}
                       </td>
                     </tr>
                   `;
@@ -1543,6 +1699,36 @@
         openEditHealerModal(btn.dataset.id);
       });
     });
+
+    document.querySelectorAll('.btn-delete-healer').forEach(btn => {
+      btn.addEventListener('click', () => {
+        confirmDeleteHealer(btn.dataset.id);
+      });
+    });
+  }
+
+  function confirmDeleteHealer(healerId) {
+    const h = (db.get('healers') || []).find(hlr => hlr.id === healerId);
+    if (!h) return;
+    const bodyHTML = `
+      <div style="padding:8px 0; font-size:0.92rem; line-height:1.5;">
+        <p style="margin-bottom:12px; color:var(--text-main);">Are you sure you want to remove healer <strong>${h.name} (${h.id})</strong>?</p>
+        <div style="background-color:#fff1f2; border:1px solid #fecdd3; padding:12px; border-radius:6px; color:#9f1239; font-size:0.85rem;">
+          <strong>Warning:</strong> Removing this healer will delete their healer account record and revoke their portal login access. Historical session logs and financial records will remain intact for audit reporting.
+        </div>
+      </div>
+    `;
+    showModal(`Remove Healer — ${h.name}`, bodyHTML, () => {
+      db.delete('healers', healerId);
+      const users = db.get('users') || [];
+      const userMatch = users.find(u => (u.email && u.email.toLowerCase() === (h.email || '').toLowerCase()) || u.username.toLowerCase() === (h.email || '').toLowerCase() || u.name === h.name);
+      if (userMatch) {
+        db.delete('users', userMatch.id);
+      }
+      closeModal();
+      renderHealers();
+      return true;
+    }, 'Remove Healer');
   }
 
   // ─── ASSIGNMENTS LIST VIEW ─────────────────────────────────────────────
@@ -1674,6 +1860,7 @@
                     <td><span class="badge-status ${p.status}">${p.status}</span></td>
                     <td style="text-align:right;">
                       <button class="btn btn-secondary-admin btn-sm btn-view-protocol" data-id="${p.id}">View Protocol details</button>
+                      ${isSuperAdmin() ? `<button class="btn btn-secondary-admin btn-sm btn-delete-protocol" data-id="${p.id}" style="color:var(--danger); border-color:#fca5a5;">Delete</button>` : ''}
                     </td>
                   </tr>
                 `).join('')}
@@ -1695,6 +1882,31 @@
         openProtocolModal(btn.dataset.id);
       });
     });
+
+    document.querySelectorAll('.btn-delete-protocol').forEach(btn => {
+      btn.addEventListener('click', () => {
+        confirmDeleteProtocol(btn.dataset.id);
+      });
+    });
+  }
+
+  function confirmDeleteProtocol(protocolId) {
+    const p = (db.get('protocols') || []).find(pr => pr.id === protocolId);
+    if (!p) return;
+    const bodyHTML = `
+      <div style="padding:8px 0; font-size:0.92rem; line-height:1.5;">
+        <p style="margin-bottom:12px; color:var(--text-main);">Delete healing protocol <strong>${p.name} (${p.id})</strong>?</p>
+        <div style="background-color:#fff1f2; border:1px solid #fecdd3; padding:12px; border-radius:6px; color:#9f1239; font-size:0.85rem;">
+          <strong>Notice:</strong> Protocol status will be set to Inactive, removing it from future assignments. Historical patient records referencing this protocol will remain intact.
+        </div>
+      </div>
+    `;
+    showModal(`Delete Protocol — ${p.name}`, bodyHTML, () => {
+      db.update('protocols', protocolId, { status: 'inactive' });
+      closeModal();
+      renderProtocols();
+      return true;
+    }, 'Delete Protocol');
   }
 
   // ─── HEALING SESSIONS LEDGER ───────────────────────────────────────────
@@ -1710,10 +1922,10 @@
       actionsSlot.innerHTML = '';
     }
 
-    let sessions = db.get('sessions') || [];
-    const patients = db.get('patients') || [];
-    const healers = db.get('healers') || [];
-    const protocols = db.get('protocols') || [];
+    const sessions = db.get('sessions');
+    const patients = db.get('patients');
+    const healers = db.get('healers');
+    const protocols = db.get('protocols');
 
     slot.innerHTML = `
       <div class="card">
@@ -1723,35 +1935,32 @@
               <thead>
                 <tr>
                   <th>Session ID</th>
-                  <th>Date</th>
+                  <th>Date & Time</th>
                   <th>Patient Name</th>
-                  <th>Responsible Healer</th>
-                  <th>Protocol Administered</th>
-                  <th>Session #</th>
-                  <th>Time Frame</th>
-                  <th>Mode</th>
+                  <th>Primary Healer</th>
+                  <th>Protocol Applied</th>
+                  <th>Format</th>
                   <th>Status</th>
                   <th style="text-align:right;">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 ${sessions.map(s => {
-      const pat = patients.find(p => p.id === s.patientId)?.name || 'Unknown';
-      const hlr = healers.find(h => h.id === s.healerId)?.name || 'Unknown';
-      const prot = protocols.find(p => p.id === s.protocolId)?.name || 'None';
+      const patName = patients.find(p => p.id === s.patientId)?.name || 'Unknown Patient';
+      const hlrName = healers.find(h => h.id === s.healerId)?.name || 'Unknown Healer';
+      const protName = protocols.find(pr => pr.id === s.protocolId)?.name || 'Standard Protocol';
+
       return `
                     <tr>
-                      <td><strong>${s.id}</strong></td>
-                      <td>${s.date}</td>
-                      <td><strong>${pat}</strong></td>
-                      <td>${hlr}</td>
-                      <td>${prot}</td>
-                      <td>Session #${s.sessionNumber}</td>
-                      <td>${s.startTime} - ${s.endTime}</td>
-                      <td>${s.mode}</td>
+                      <td><strong>#${s.sessionNumber}</strong></td>
+                      <td>${s.date} @ ${s.startTime}</td>
+                      <td style="font-weight:600;"><a href="#" class="view-patient-profile-link" data-id="${s.patientId}">${patName}</a></td>
+                      <td>${hlrName}</td>
+                      <td>${protName}</td>
+                      <td><span class="badge-category">${s.mode}</span></td>
                       <td><span class="badge-status ${s.status}">${s.status}</span></td>
                       <td style="text-align:right;">
-                        <button class="btn btn-secondary-admin btn-sm btn-view-session-details" data-id="${s.id}">View Notes</button>
+                        <button class="btn btn-secondary-admin btn-sm btn-view-session" data-id="${s.id}">View Log</button>
                       </td>
                     </tr>
                   `;
@@ -1769,9 +1978,16 @@
       });
     }
 
-    document.querySelectorAll('.btn-view-session-details').forEach(btn => {
+    document.querySelectorAll('.btn-view-session').forEach(btn => {
       btn.addEventListener('click', () => {
-        openSessionNotesModal(btn.dataset.id);
+        openSessionDetailsModal(btn.dataset.id);
+      });
+    });
+
+    document.querySelectorAll('.view-patient-profile-link').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        openPatientProfile(el.dataset.id);
       });
     });
   }
@@ -1805,6 +2021,7 @@
                   <th>Validity Period</th>
                   <th>Description</th>
                   <th>Status</th>
+                  <th style="text-align:right;">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -1819,8 +2036,10 @@
                     <td>
                       <select class="form-select package-status-select btn-sm" data-id="${p.id}" ${!isSuperAdmin() ? 'disabled' : ''} style="padding:4px 8px; font-size:0.75rem; min-width:auto; height:auto;">
                         <option value="active" ${p.status === 'active' ? 'selected' : ''}>Active</option>
-                        <option value="inactive" ${p.status === 'inactive' ? 'selected' : ''}>Inactive</option>
                       </select>
+                    </td>
+                    <td style="text-align:right;">
+                      ${isSuperAdmin() ? `<button class="btn btn-secondary-admin btn-sm btn-delete-package" data-id="${p.id}" style="color:var(--danger); border-color:#fca5a5;">Remove</button>` : '<span style="color:var(--text-muted); font-size:0.8rem; font-style:italic;">View Only</span>'}
                     </td>
                   </tr>
                 `).join('')}
@@ -1842,6 +2061,31 @@
         db.update('packages', sel.dataset.id, { status: sel.value });
       });
     });
+
+    document.querySelectorAll('.btn-delete-package').forEach(btn => {
+      btn.addEventListener('click', () => {
+        confirmDeletePackage(btn.dataset.id);
+      });
+    });
+  }
+
+  function confirmDeletePackage(packageId) {
+    const pkg = (db.get('packages') || []).find(pk => pk.id === packageId);
+    if (!pkg) return;
+    const bodyHTML = `
+      <div style="padding:8px 0; font-size:0.92rem; line-height:1.5;">
+        <p style="margin-bottom:12px; color:var(--text-main);">Remove package variant <strong>${pkg.name} (${pkg.id})</strong>?</p>
+        <div style="background-color:#fff1f2; border:1px solid #fecdd3; padding:12px; border-radius:6px; color:#9f1239; font-size:0.85rem;">
+          <strong>Notice:</strong> Package variant will be deactivated from future billing. Existing invoice and payment ledgers referencing this package will be preserved.
+        </div>
+      </div>
+    `;
+    showModal(`Delete Package — ${pkg.name}`, bodyHTML, () => {
+      db.update('packages', packageId, { status: 'inactive' });
+      closeModal();
+      renderPackages();
+      return true;
+    }, 'Remove Package');
   }
 
   // ─── PAYMENTS LEDGER SCREEN ────────────────────────────────────────────
@@ -2210,10 +2454,13 @@
       tableHeaders = ['Referrer Name', 'Patients Acquired', 'Total Received Revenue', 'Commissions Generated', 'Commissions Paid', 'Outstanding Commissions'];
       csvData.push(tableHeaders);
 
-      const referrers = ['Super Admin 1', 'Super Admin 2', 'Super Admin 3', 'Social Media / Website'];
+      const referralSources = getDynamicReferralSources();
 
-      referrers.forEach(ref => {
-        const refPatients = patients.filter(p => p.referredBy === ref);
+      referralSources.forEach(source => {
+        const refPatients = patients.filter(p => {
+          const refName = resolveReferrerName(p.referredBy, p.referredByUserId);
+          return refName === source.name || p.referredBy === source.name || p.referredByUserId === source.id;
+        });
         const pIds = refPatients.map(p => p.id);
 
         // Sum revenue
@@ -2221,14 +2468,14 @@
         const totalReceived = refPayments.reduce((acc, pay) => acc + pay.amountReceived, 0);
 
         // Sum commissions
-        const refCommissions = commissions.filter(c => pIds.includes(c.patientId));
+        const refCommissions = commissions.filter(c => pIds.includes(c.patientId) || c.referredByUserId === source.id || c.referredBy === source.name || c.referrerName === source.name);
         const commGenerated = refCommissions.reduce((acc, c) => acc + c.commissionAmount, 0);
         const commPaid = refCommissions.filter(c => c.status === 'paid').reduce((acc, c) => acc + c.commissionAmount, 0);
         const commPending = refCommissions.filter(c => c.status === 'accrued' || c.status === 'pending').reduce((acc, c) => acc + c.commissionAmount, 0);
 
         tableRowsHTML += `
           <tr>
-            <td><strong>${ref}</strong></td>
+            <td><strong>${source.name}</strong></td>
             <td><span class="badge-category">${refPatients.length} patients</span></td>
             <td>₹${totalReceived.toLocaleString()}</td>
             <td>₹${commGenerated.toLocaleString()}</td>
@@ -2236,7 +2483,7 @@
             <td><span style="color:var(--warning); font-weight:600;">₹${commPending.toLocaleString()}</span></td>
           </tr>
         `;
-        csvData.push([ref, refPatients.length, totalReceived, commGenerated, commPaid, commPending]);
+        csvData.push([source.name, refPatients.length, totalReceived, commGenerated, commPaid, commPending]);
       });
 
       const grandTotalCommGenerated = commissions.reduce((acc, c) => acc + c.commissionAmount, 0);
@@ -2355,15 +2602,21 @@
     const slot = document.getElementById('tab-specific-content');
     const actionsSlot = document.getElementById('page-header-actions-slot');
 
-    actionsSlot.innerHTML = '';
+    if (isSuperAdmin()) {
+      actionsSlot.innerHTML = `
+        <button class="btn btn-primary-admin" id="btn-add-user">+ Add User Account</button>
+      `;
+    } else {
+      actionsSlot.innerHTML = '';
+    }
 
-    // Filter to only show the 3 Admin accounts (excluding Super Admin)
-    const adminUsers = (db.get('users') || []).filter(u => u.role === 'Admin');
+    // Display all system accounts (Super Admin & Admin accounts)
+    const allUsers = db.get('users') || [];
 
     slot.innerHTML = `
       <div class="card">
         <div class="card-header">
-          <span class="card-title">System Admin Accounts (3 Accounts)</span>
+          <span class="card-title">System Admin Accounts (${allUsers.length} Total Accounts)</span>
         </div>
         <div class="card-body" style="padding:0;">
           <div class="table-responsive">
@@ -2382,26 +2635,40 @@
                 </tr>
               </thead>
               <tbody>
-                ${adminUsers.map(u => `
-                  <tr>
-                    <td><strong>${u.id}</strong></td>
-                    <td style="font-weight:600;">${u.name}</td>
-                    <td>${u.username}</td>
-                    <td>${u.mobile}</td>
-                    <td><span class="badge-category" style="background-color:#e0e7ff; color:#3730a3;">${u.role} (View-Only)</span></td>
-                    <td>${u.dateCreated}</td>
-                    <td>${u.lastLogin || 'Never'}</td>
-                    <td>
-                      <select class="form-select user-status-select btn-sm" data-id="${u.id}" style="padding:4px 8px; font-size:0.75rem; min-width:auto; height:auto;">
-                        <option value="active" ${u.status === 'active' ? 'selected' : ''}>Active</option>
-                        <option value="inactive" ${u.status === 'inactive' ? 'selected' : ''}>Inactive</option>
-                      </select>
-                    </td>
-                    <td style="text-align:right;">
-                      <button class="btn btn-secondary-admin btn-sm btn-edit-user" data-id="${u.id}">Edit Details / Reset Pwd</button>
-                    </td>
-                  </tr>
-                `).join('')}
+                ${allUsers.map(u => {
+      const isSuper = u.role === 'Super Admin';
+      const badgeStyle = isSuper
+        ? 'background-color:#fef3c7; color:#92400e; font-weight:700;'
+        : 'background-color:#e0e7ff; color:#3730a3; font-weight:600;';
+
+      const actionsHTML = isSuperAdmin() ? `
+                    <button class="btn btn-secondary-admin btn-sm btn-edit-user" data-id="${u.id}">Edit</button>
+                    ${u.id !== 'USR001' ? `<button class="btn btn-secondary-admin btn-sm btn-delete-user" data-id="${u.id}" style="color:var(--danger); border-color:#fca5a5;">Delete</button>` : ''}
+                  ` : `
+                    <span style="color:var(--text-muted); font-size:0.8rem; font-style:italic;">Protected</span>
+                  `;
+
+      return `
+                    <tr>
+                      <td><strong>${u.id}</strong></td>
+                      <td style="font-weight:600;">${u.name}</td>
+                      <td>${u.username}</td>
+                      <td>${u.mobile}</td>
+                      <td><span class="badge-category" style="${badgeStyle}">${u.role}</span></td>
+                      <td>${u.dateCreated}</td>
+                      <td>${u.lastLogin || 'Never'}</td>
+                      <td>
+                        <select class="form-select user-status-select btn-sm" data-id="${u.id}" ${!isSuperAdmin() ? 'disabled' : ''} style="padding:4px 8px; font-size:0.75rem; min-width:auto; height:auto;">
+                          <option value="active" ${u.status === 'active' ? 'selected' : ''}>Active</option>
+                          <option value="inactive" ${u.status === 'inactive' ? 'selected' : ''}>Inactive</option>
+                        </select>
+                      </td>
+                      <td style="text-align:right;">
+                        ${actionsHTML}
+                      </td>
+                    </tr>
+                  `;
+    }).join('')}
               </tbody>
             </table>
           </div>
@@ -2409,9 +2676,16 @@
       </div>
     `;
 
+    if (isSuperAdmin() && document.getElementById('btn-add-user')) {
+      document.getElementById('btn-add-user').addEventListener('click', () => {
+        openAddUserModal(null);
+      });
+    }
+
     document.querySelectorAll('.user-status-select').forEach(sel => {
       sel.addEventListener('change', () => {
         db.update('users', sel.dataset.id, { status: sel.value });
+        renderUsers();
       });
     });
 
@@ -2420,6 +2694,35 @@
         openAddUserModal(btn.dataset.id);
       });
     });
+
+    document.querySelectorAll('.btn-delete-user').forEach(btn => {
+      btn.addEventListener('click', () => {
+        confirmDeleteUser(btn.dataset.id);
+      });
+    });
+  }
+
+  function confirmDeleteUser(userId) {
+    const u = (db.get('users') || []).find(usr => usr.id === userId);
+    if (!u) return;
+    if (u.id === 'USR001') {
+      alert('The primary Super Admin account (USR001) cannot be deleted.');
+      return;
+    }
+    const bodyHTML = `
+      <div style="padding:8px 0; font-size:0.92rem; line-height:1.5;">
+        <p style="margin-bottom:12px; color:var(--text-main);">Are you sure you want to delete account <strong>${u.name} (${u.username})</strong>?</p>
+        <div style="background-color:#fff1f2; border:1px solid #fecdd3; padding:12px; border-radius:6px; color:#9f1239; font-size:0.85rem;">
+          <strong>Warning:</strong> Deleting this account will permanently revoke their login credentials and portal access.
+        </div>
+      </div>
+    `;
+    showModal(`Delete User Account — ${u.name}`, bodyHTML, () => {
+      db.delete('users', userId);
+      closeModal();
+      renderUsers();
+      return true;
+    }, 'Delete Account');
   }
 
   // ─── MAJOR EVENTS CMS RENDERER ──────────────────────────────────────────
@@ -2948,11 +3251,11 @@
   }
 
   function openConvertPatientForm(contactObj) {
-    const settings = db.get('settings') || { referralSources: [] };
+    const dynamicRefSources = getDynamicReferralSources();
     const nextPatientId = 'PTN' + String(db.get('patients').length + 1).padStart(3, '0');
 
-    const selectOptions = settings.referralSources.map(ref => {
-      return `<option value="${ref}">${ref}</option>`;
+    const selectOptions = dynamicRefSources.map(ref => {
+      return `<option value="${ref.id}">${ref.label}</option>`;
     }).join('');
 
     const bodyHTML = `
@@ -3020,18 +3323,22 @@
           </div>
           <div class="form-control-wrap form-group-full">
             <label class="form-label-admin required">Main Concern / Reason for Seeking Healing</label>
-            <textarea id="conv-concern" class="form-textarea-admin" required>${contactObj.preferredService} — Message: ${contactObj.message || ''}</textarea>
+            <textarea id="conv-concern" class="form-textarea-admin" required>${contactObj.message || ''}</textarea>
           </div>
         </div>
       </form>
     `;
 
-    showModal('Convert Contact ' + contactObj.id + ' to Patient Record', bodyHTML, () => {
+    showModal('Convert Contact Enquiry to Patient Record', bodyHTML, () => {
       const form = document.getElementById('convert-patient-form');
       if (!form.reportValidity()) return false;
 
       const dobStr = document.getElementById('conv-dob').value;
       const age = new Date().getFullYear() - new Date(dobStr).getFullYear();
+
+      const selectedRefId = document.getElementById('conv-referred').value;
+      const refSources = getDynamicReferralSources();
+      const refObj = refSources.find(r => r.id === selectedRefId);
 
       const patientData = {
         id: nextPatientId,
@@ -3044,14 +3351,30 @@
         email: document.getElementById('conv-email').value.trim(),
         address: document.getElementById('conv-address').value.trim(),
         category: document.getElementById('conv-category').value,
-        referredBy: document.getElementById('conv-referred').value,
+        referredBy: refObj ? refObj.name : selectedRefId,
+        referredByUserId: refObj ? refObj.id : selectedRefId,
         status: document.getElementById('conv-status').value,
         concern: document.getElementById('conv-concern').value.trim(),
-        notes: 'Converted from contact enquiry ' + contactObj.id + '.',
+        notes: `Converted from Website Contact Enquiry ID: ${contactObj.id}`,
         registrationDate: new Date().toISOString().split('T')[0]
       };
 
       db.add('patients', patientData);
+
+      // Automatically create commission ledger record if referred by a user
+      const commAmount = 500; // default estimated commission
+      db.add('commissions', {
+        id: 'COM' + String(db.get('commissions').length + 1).padStart(3, '0'),
+        patientId: patientData.id,
+        referrerName: patientData.referredBy,
+        referredByUserId: patientData.referredByUserId,
+        packageId: 'PKG001',
+        totalPackageAmount: 2000,
+        commissionRate: 25,
+        commissionAmount: commAmount,
+        status: 'accrued',
+        dateGenerated: new Date().toISOString().split('T')[0]
+      });
 
       // Update source contact message to closed/processed status
       db.update('contacts', contactObj.id, {
@@ -3080,9 +3403,14 @@
   function openPatientFormModal(patientId = null) {
     const isEdit = !!patientId;
     const p = isEdit ? db.get('patients').find(pt => pt.id === patientId) : null;
-    const settings = db.get('settings');
+    const dynamicRefSources = getDynamicReferralSources();
 
     const nextId = isEdit ? p.id : 'PTN' + String(db.get('patients').length + 1).padStart(3, '0');
+
+    const selectOptions = dynamicRefSources.map(ref => {
+      const isSelected = isEdit && (p.referredByUserId === ref.id || p.referredBy === ref.name);
+      return `<option value="${ref.id}" ${isSelected ? 'selected' : ''}>${ref.label}</option>`;
+    }).join('');
 
     const bodyHTML = `
       <form id="patient-form">
@@ -3124,9 +3452,7 @@
             <label class="form-label-admin required">Referred By</label>
             <select id="p-referred" class="form-select-admin" required>
               <option value="">Select Referrer Source</option>
-              ${settings.referralSources.map(ref => `
-                <option value="${ref}" ${isEdit && p.referredBy === ref ? 'selected' : ''}>${ref}</option>
-              `).join('')}
+              ${selectOptions}
             </select>
           </div>
           <div class="form-control-wrap">
@@ -3174,6 +3500,10 @@
       const dobStr = document.getElementById('p-dob').value;
       const age = new Date().getFullYear() - new Date(dobStr).getFullYear();
 
+      const selectedRefId = document.getElementById('p-referred').value;
+      const refSources = getDynamicReferralSources();
+      const refObj = refSources.find(r => r.id === selectedRefId);
+
       const patientData = {
         id: nextId,
         name: document.getElementById('p-name').value.trim(),
@@ -3185,7 +3515,8 @@
         email: document.getElementById('p-email').value.trim(),
         address: document.getElementById('p-address').value.trim(),
         category: document.getElementById('p-category').value,
-        referredBy: document.getElementById('p-referred').value,
+        referredBy: refObj ? refObj.name : selectedRefId,
+        referredByUserId: refObj ? refObj.id : selectedRefId,
         status: document.getElementById('p-status').value,
         concern: document.getElementById('p-concern').value.trim(),
         notes: document.getElementById('p-notes').value.trim(),
@@ -3861,39 +4192,42 @@
     }
   }
 
-  // 8. EDIT ADMIN ACCOUNT MODAL
+  // 8. ADD / EDIT ADMIN ACCOUNT MODAL
   function openAddUserModal(userId = null) {
     const isEdit = !!userId;
     const u = isEdit ? db.get('users').find(usr => usr.id === userId) : null;
-    if (!u) return;
+    const nextId = isEdit ? u.id : 'USR' + String(db.get('users').length + 1).padStart(3, '0');
 
     const bodyHTML = `
       <form id="user-form">
         <div class="form-grid">
           <div class="form-control-wrap">
             <label class="form-label-admin">User ID</label>
-            <input type="text" class="form-input-admin" value="${u.id}" disabled style="background-color:#f1f5f9;">
+            <input type="text" class="form-input-admin" value="${nextId}" disabled style="background-color:#f1f5f9;">
           </div>
           <div class="form-control-wrap">
             <label class="form-label-admin required">Full Name</label>
-            <input type="text" id="u-name" class="form-input-admin" value="${u.name}" required>
+            <input type="text" id="u-name" class="form-input-admin" value="${isEdit ? u.name : ''}" required>
           </div>
           <div class="form-control-wrap">
             <label class="form-label-admin required">Login Username / Email</label>
-            <input type="email" id="u-username" class="form-input-admin" value="${u.username}" disabled style="background-color:#f1f5f9;">
+            <input type="email" id="u-username" class="form-input-admin" value="${isEdit ? u.username : ''}" required ${isEdit ? 'disabled style="background-color:#f1f5f9;"' : ''}>
           </div>
           <div class="form-control-wrap">
             <label class="form-label-admin required">Mobile Number</label>
-            <input type="tel" id="u-mobile" class="form-input-admin" value="${u.mobile}" required>
+            <input type="tel" id="u-mobile" class="form-input-admin" value="${isEdit ? u.mobile : ''}" required>
           </div>
           <div class="form-control-wrap">
-            <label class="form-label-admin required">Role Type</label>
-            <input type="text" id="u-role" class="form-input-admin" value="${u.role} (Strict View-Only)" disabled style="background-color:#f1f5f9;">
+            <label class="form-label-admin required">Account Role</label>
+            <select id="u-role" class="form-select-admin" required>
+              <option value="Super Admin" ${isEdit && u.role === 'Super Admin' ? 'selected' : ''}>Super Admin (Full Management Access)</option>
+              <option value="Admin" ${isEdit && u.role === 'Admin' ? 'selected' : ''}>Admin (Strict View & Monitor Only)</option>
+            </select>
           </div>
           <div class="form-control-wrap" style="position: relative;">
-            <label class="form-label-admin required">Password (Reset if needed)</label>
+            <label class="form-label-admin required">Password</label>
             <div style="position: relative; display: flex; align-items: center;">
-              <input type="password" id="u-password" class="form-input-admin" value="${u.password}" required style="padding-right: 40px; width: 100%;">
+              <input type="password" id="u-password" class="form-input-admin" value="${isEdit ? u.password : 'password'}" required style="padding-right: 40px; width: 100%;">
               <button type="button" id="btn-toggle-u-password" style="position: absolute; right: 10px; background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; padding: 0;">
                 <svg id="svg-toggle-u-password" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -3906,20 +4240,35 @@
       </form>
     `;
 
-    showModal(`Edit Admin Account — ${u.name}`, bodyHTML, () => {
+    showModal(isEdit ? `Edit Admin Account — ${u.name}` : 'Create New System User Account', bodyHTML, () => {
       const form = document.getElementById('user-form');
       if (!form.reportValidity()) return false;
 
+      const newRole = document.getElementById('u-role').value;
       const userData = {
         name: document.getElementById('u-name').value.trim(),
+        username: document.getElementById('u-username').value.toLowerCase().trim(),
         mobile: document.getElementById('u-mobile').value.trim(),
-        password: document.getElementById('u-password').value
+        role: newRole,
+        password: document.getElementById('u-password').value,
+        status: isEdit ? u.status : 'active',
+        dateCreated: isEdit ? u.dateCreated : new Date().toISOString().split('T')[0]
       };
 
-      db.update('users', userId, userData);
+      if (isEdit) {
+        db.update('users', userId, userData);
+        if (state.currentUser && state.currentUser.id === userId) {
+          state.currentUser.role = newRole;
+          sessionStorage.setItem('hh_active_user', JSON.stringify({ ...state.currentUser, role: newRole }));
+        }
+      } else {
+        userData.id = nextId;
+        db.add('users', userData);
+      }
 
       closeModal();
       renderUsers();
+      renderAdminDashboardLayout(); // Refresh sidebar navigation & permissions
       return true;
     });
 
