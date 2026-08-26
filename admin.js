@@ -943,9 +943,9 @@
       if (isSuperAdmin()) {
         actionsHTML += '<button class="btn btn-primary-admin" id="btn-add-patient-action">+ Add Patient</button> ';
       }
-      actionsHTML += '<button class="btn btn-secondary-admin" id="btn-export-patient-csv">Export CSV</button>';
+      actionsHTML += '<button class="btn btn-secondary-admin" id="btn-export-patient-pdf">Export PDF Report</button>';
     } else {
-      actionsHTML += '<button class="btn btn-primary-admin" id="btn-export-register-csv">Export Register CSV</button>';
+      actionsHTML += '<button class="btn btn-primary-admin" id="btn-export-register-pdf">Export Register PDF Report</button>';
     }
     actionsSlot.innerHTML = actionsHTML;
 
@@ -1046,16 +1046,16 @@
       renderPatients();
     });
 
-    // Hook export CSV events
-    if (document.getElementById('btn-export-patient-csv')) {
-      document.getElementById('btn-export-patient-csv').addEventListener('click', () => {
-        exportPatientCSV('database');
+    // Hook export PDF events
+    if (document.getElementById('btn-export-patient-pdf')) {
+      document.getElementById('btn-export-patient-pdf').addEventListener('click', () => {
+        exportPatientPDF('database');
       });
     }
 
-    if (document.getElementById('btn-export-register-csv')) {
-      document.getElementById('btn-export-register-csv').addEventListener('click', () => {
-        exportPatientCSV('register');
+    if (document.getElementById('btn-export-register-pdf')) {
+      document.getElementById('btn-export-register-pdf').addEventListener('click', () => {
+        exportPatientPDF('register');
       });
     }
 
@@ -1080,24 +1080,26 @@
     filterAndRenderPatients();
   }
 
-  function exportPatientCSV(tab) {
+  function exportPatientPDF(tab) {
     const allPatients = db.get('patients') || [];
     const assignments = db.get('assignments') || [];
     const healers = db.get('healers') || [];
     const protocols = db.get('protocols') || [];
-    const sessions = db.get('sessions') || [];
 
     let targetPatients = [];
+    let reportTitle = '';
     if (tab === 'database') {
       targetPatients = allPatients.filter(p => p.status === 'new' || p.status === 'active' || p.status === 'follow-up');
+      reportTitle = 'Active Working Patient Database Report';
     } else {
       targetPatients = allPatients.filter(p => p.status === 'completed' || p.status === 'closed');
+      reportTitle = 'Completed & Closed Patient Register Report';
     }
 
-    const headers = ['Patient ID', 'Patient Name', 'Gender', 'DOB', 'Phone', 'Email', 'Category', 'Main Concern', 'Status', 'Referred By', 'Assigned Healer', 'Protocol', 'Registration Date', 'Last Session Date'];
-    const rows = [headers];
+    const generatedDate = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+    const activeUser = getActiveUser() || { name: 'Super Admin', role: 'Super Admin' };
 
-    targetPatients.forEach(p => {
+    let tableRows = targetPatients.map(p => {
       const asg = assignments.find(a => a.patientId === p.id && a.status === 'active');
       let healerName = 'Unassigned';
       let protocolName = 'None';
@@ -1107,38 +1109,150 @@
         if (hlr) healerName = hlr.name;
         if (prot) protocolName = prot.name;
       }
-      const patSessions = sessions.filter(s => s.patientId === p.id && s.status === 'completed');
-      patSessions.sort((a, b) => b.date.localeCompare(a.date));
-      const lastSession = patSessions.length > 0 ? patSessions[0].date : 'None';
       const refName = resolveReferrerName(p.referredBy, p.referredByUserId);
 
-      rows.push([
-        `"${p.id}"`,
-        `"${p.name.replace(/"/g, '""')}"`,
-        `"${p.gender || ''}"`,
-        `"${p.dob || ''}"`,
-        `"${p.mobile || ''}"`,
-        `"${p.email || ''}"`,
-        `"${p.category || ''}"`,
-        `"${(p.concern || '').replace(/"/g, '""')}"`,
-        `"${p.status}"`,
-        `"${refName.replace(/"/g, '""')}"`,
-        `"${healerName.replace(/"/g, '""')}"`,
-        `"${protocolName.replace(/"/g, '""')}"`,
-        `"${p.registrationDate || ''}"`,
-        `"${lastSession}"`
-      ]);
-    });
+      return `
+        <tr>
+          <td><strong>${p.id}</strong></td>
+          <td style="font-weight:600; color:#1e293b;">${p.name}</td>
+          <td>${p.mobile}</td>
+          <td><span class="tag">${p.category}</span></td>
+          <td>${refName}</td>
+          <td>${healerName}</td>
+          <td>${protocolName}</td>
+          <td><span class="status-badge ${p.status}">${p.status.toUpperCase()}</span></td>
+          <td>${p.registrationDate || 'N/A'}</td>
+        </tr>
+      `;
+    }).join('');
 
-    const csvContent = rows.map(r => r.join(',')).join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', tab === 'database' ? 'patient_database_export.csv' : 'patient_register_export.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (targetPatients.length === 0) {
+      tableRows = `<tr><td colspan="9" style="text-align:center; padding:32px; color:#64748b;">No patient records found for this section.</td></tr>`;
+    }
+
+    const printHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>${reportTitle} — Universe Healing Haven</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+          * { box-sizing: border-box; margin: 0; padding: 0; }
+          body { font-family: 'Plus Jakarta Sans', sans-serif; color: #0f172a; padding: 32px; background: #ffffff; line-height: 1.5; font-size: 13px; }
+          
+          .header-bar { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #6b7d5e; padding-bottom: 20px; margin-bottom: 24px; }
+          .brand-logo { font-size: 22px; font-weight: 800; color: #3e4c34; letter-spacing: -0.5px; }
+          .brand-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+          .meta-info { text-align: right; font-size: 11px; color: #475569; }
+          .meta-info strong { color: #0f172a; }
+
+          .doc-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
+          .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+          .kpi-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; text-align: center; }
+          .kpi-box-lbl { font-size: 10px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+          .kpi-box-val { font-size: 18px; font-weight: 800; color: #3e4c34; margin-top: 4px; }
+
+          table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 12px; }
+          th { background: #f1f5f9; color: #334155; text-align: left; padding: 10px 12px; font-weight: 700; border-bottom: 2px solid #cbd5e1; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+          td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+          tr:nth-child(even) { background-color: #fafafa; }
+
+          .tag { background: #f1f5f9; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; color: #475569; }
+          .status-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+          .status-badge.new { background: #e0f2fe; color: #0369a1; }
+          .status-badge.active { background: #dcfce7; color: #15803d; }
+          .status-badge.follow-up { background: #fef3c7; color: #b45309; }
+          .status-badge.completed { background: #e0e7ff; color: #4338ca; }
+          .status-badge.closed { background: #f1f5f9; color: #475569; }
+
+          .footer-bar { margin-top: 32px; border-top: 1px solid #e2e8f0; padding-top: 16px; display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; }
+          
+          @media print {
+            body { padding: 16px; }
+            button { display: none !important; }
+            .header-bar { border-bottom-color: #000; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header-bar">
+          <div>
+            <div class="brand-logo">UNIVERSE HEALING HAVEN</div>
+            <div class="brand-sub">Clinical & Operations Management System</div>
+          </div>
+          <div class="meta-info">
+            <div>Report Date: <strong>${generatedDate}</strong></div>
+            <div>Generated By: <strong>${activeUser.name} (${activeUser.role})</strong></div>
+            <div>Contact Support: <strong>+91 9493132940</strong></div>
+          </div>
+        </div>
+
+        <div class="doc-title">
+          <span>${reportTitle}</span>
+          <span style="font-size:12px; font-weight:600; color:#6b7d5e;">Total Records: ${targetPatients.length}</span>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi-box">
+            <div class="kpi-box-lbl">Total Records</div>
+            <div class="kpi-box-val">${targetPatients.length}</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-box-lbl">New Patients</div>
+            <div class="kpi-box-val">${targetPatients.filter(p => p.status === 'new').length}</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-box-lbl">Active Cases</div>
+            <div class="kpi-box-val">${targetPatients.filter(p => p.status === 'active').length}</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-box-lbl">Completed / Healed</div>
+            <div class="kpi-box-val">${targetPatients.filter(p => p.status === 'completed').length}</div>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Patient ID</th>
+              <th>Full Name</th>
+              <th>Mobile</th>
+              <th>Category</th>
+              <th>Referred By</th>
+              <th>Assigned Healer</th>
+              <th>Protocol</th>
+              <th>Status</th>
+              <th>Reg Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+          </tbody>
+        </table>
+
+        <div class="footer-bar">
+          <div>CONFIDENTIAL — Internal Clinical & Administrative Document</div>
+          <div>Universe Healing Haven &copy; 2026</div>
+        </div>
+
+        <script>
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+            }, 300);
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    const printWin = window.open('', '_blank', 'width=1000,height=800');
+    if (printWin) {
+      printWin.document.open();
+      printWin.document.write(printHTML);
+      printWin.document.close();
+    }
   }
 
   function filterAndRenderPatients() {
@@ -2513,8 +2627,7 @@
         <div class="card-header" style="background-color:#fff;">
           <span class="card-title" style="font-size:1.1rem; color:var(--primary); font-weight:700;">${title}</span>
           <div style="display:flex; gap:10px;">
-            <button class="btn btn-secondary-admin btn-sm" id="btn-print-report">Print Report</button>
-            <button class="btn btn-primary-admin btn-sm" id="btn-export-csv-action">Export CSV</button>
+            <button class="btn btn-primary-admin btn-sm" id="btn-export-pdf-action">Export PDF Report</button>
           </div>
         </div>
         <div class="card-body">
@@ -2535,26 +2648,100 @@
       </div>
     `;
 
-    // Export CSV logic
-    document.getElementById('btn-export-csv-action').addEventListener('click', () => {
-      let csvContent = "data:text/csv;charset=utf-8,";
-      csvData.forEach(rowArray => {
-        let row = rowArray.map(val => `"${String(val).replace(/"/g, '""')}"`).join(",");
-        csvContent += row + "\r\n";
-      });
+    // Export PDF Report logic
+    document.getElementById('btn-export-pdf-action').addEventListener('click', () => {
+      const generatedDate = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+      const activeUser = getActiveUser() || { name: 'Super Admin', role: 'Super Admin' };
 
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `Universe_Healing_Haven_${type}_report_${new Date().toISOString().split('T')[0]}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    });
+      const printHTML = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${title} — Universe Healing Haven</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { font-family: 'Plus Jakarta Sans', sans-serif; color: #0f172a; padding: 32px; background: #ffffff; line-height: 1.5; font-size: 12px; }
+            
+            .header-bar { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #6b7d5e; padding-bottom: 20px; margin-bottom: 24px; }
+            .brand-logo { font-size: 22px; font-weight: 800; color: #3e4c34; letter-spacing: -0.5px; }
+            .brand-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+            .meta-info { text-align: right; font-size: 11px; color: #475569; }
+            .meta-info strong { color: #0f172a; }
 
-    // Print logic
-    document.getElementById('btn-print-report').addEventListener('click', () => {
-      window.print();
+            .doc-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 16px; }
+            .summary-area { margin-bottom: 20px; }
+
+            table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 12px; }
+            th { background: #f1f5f9; color: #334155; text-align: left; padding: 10px 12px; font-weight: 700; border-bottom: 2px solid #cbd5e1; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+            td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+            tr:nth-child(even) { background-color: #fafafa; }
+
+            .badge-category { background: #f1f5f9; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; color: #475569; }
+            .badge-status { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+            .badge-status.active { background: #dcfce7; color: #15803d; }
+            .badge-status.completed { background: #e0e7ff; color: #4338ca; }
+            .badge-status.new { background: #e0f2fe; color: #0369a1; }
+            .badge-status.inactive, .badge-status.closed { background: #f1f5f9; color: #475569; }
+
+            .footer-bar { margin-top: 32px; border-top: 1px solid #e2e8f0; padding-top: 16px; display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8; }
+            
+            @media print {
+              body { padding: 16px; }
+              button { display: none !important; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header-bar">
+            <div>
+              <div class="brand-logo">UNIVERSE HEALING HAVEN</div>
+              <div class="brand-sub">Clinical & Operations Executive BI Reporting</div>
+            </div>
+            <div class="meta-info">
+              <div>Report Date: <strong>${generatedDate}</strong></div>
+              <div>Generated By: <strong>${activeUser.name} (${activeUser.role})</strong></div>
+              <div>Contact Support: <strong>+91 9493132940</strong></div>
+            </div>
+          </div>
+
+          <div class="doc-title">${title}</div>
+          <div class="summary-area">${summaryHTML}</div>
+
+          <table>
+            <thead>
+              <tr>
+                ${tableHeaders.map(th => `<th>${th}</th>`).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRowsHTML}
+            </tbody>
+          </table>
+
+          <div class="footer-bar">
+            <div>CONFIDENTIAL — Administrative BI Business Report</div>
+            <div>Universe Healing Haven &copy; 2026</div>
+          </div>
+
+          <script>
+            window.onload = function() {
+              setTimeout(function() {
+                window.print();
+              }, 300);
+            };
+          </script>
+        </body>
+        </html>
+      `;
+
+      const printWin = window.open('', '_blank', 'width=1000,height=800');
+      if (printWin) {
+        printWin.document.open();
+        printWin.document.write(printHTML);
+        printWin.document.close();
+      }
     });
   }
 
