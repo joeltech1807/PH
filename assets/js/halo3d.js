@@ -125,7 +125,7 @@
     '  float depth = mix(0.42, 1.0, smoothstep(-9.5, -5.5, vZ));' +
     '  float a = uAlpha * (0.28 + 0.72 * fr) * depth * (gl_FrontFacing ? 1.0 : 0.55) + spec * 0.55;' +
     '  a = clamp(a, 0.0, 1.0);' +
-    '  gl_FragColor = vec4(col * a, a);' +
+    '  gl_FragColor = vec4(min(col, vec3(1.0)) * a, a);' +
     '}';
 
   function hexToVec(h) {
@@ -255,6 +255,7 @@
       }, { passive: true });
     }
     function readScroll() {
+      if (reduceMotion) { scrollP = 0; return; } // static frame ignores scroll position
       var h = hero.offsetHeight || 1;
       scrollP = Math.min(1, Math.max(0, window.scrollY / h));
     }
@@ -302,7 +303,7 @@
     }
 
     /* ── Loop control: only run while visible ── */
-    var running = false, rafId = 0, last = 0, onScreen = true;
+    var running = false, rafId = 0, last = 0, onScreen = true, lost = false;
     var minDelta = isMobile ? 1000 / 30 : 0;
     function loop(t) {
       if (!running) return;
@@ -312,7 +313,7 @@
       render(t);
     }
     function start() {
-      if (running || reduceMotion || !onScreen || document.hidden) return;
+      if (running || lost || reduceMotion || !onScreen || document.hidden) return;
       running = true;
       rafId = requestAnimationFrame(loop);
     }
@@ -344,10 +345,11 @@
       start();
     }
 
-    canvas.addEventListener('webglcontextlost', function (e) {
-      e.preventDefault();
+    // On context loss, stop for good and hand over to the static SVG halo
+    canvas.addEventListener('webglcontextlost', function () {
+      lost = true;
       stop();
-      holder.classList.remove('is-3d'); // fall back to the static SVG halo
+      holder.classList.remove('is-3d');
     });
 
     // Free GPU resources when the page is really unloaded (kept for bfcache restores)

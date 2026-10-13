@@ -3622,7 +3622,7 @@ button {
    Runs on first paint without waiting for JavaScript, so the headline
    (the page's LCP element) is never gated behind script execution. */
 .hero-eyebrow {
-  animation: heroRise var(--dur-hero) var(--ease-signature) 80ms both;
+  animation: heroRise var(--dur-hero) var(--ease-signature) 80ms backwards;
 }
 
 .hl-line {
@@ -3636,7 +3636,7 @@ button {
 
 .hl-line-inner {
   display: inline-block;
-  animation: heroLine var(--dur-hero) var(--ease-signature) 160ms both;
+  animation: heroLine var(--dur-hero) var(--ease-signature) 160ms backwards;
 }
 
 .hl-line + br + .hl-line .hl-line-inner {
@@ -3644,11 +3644,11 @@ button {
 }
 
 .hero-sub {
-  animation: heroRise var(--dur-hero) var(--ease-signature) 480ms both;
+  animation: heroRise var(--dur-hero) var(--ease-signature) 480ms backwards;
 }
 
 .hero-ctas > * {
-  animation: heroRise var(--dur-hero) var(--ease-signature) 600ms both;
+  animation: heroRise var(--dur-hero) var(--ease-signature) 600ms backwards;
 }
 
 .hero-ctas > * + * {
@@ -3693,7 +3693,7 @@ button {
 }
 
 .hero-halo-fallback {
-  animation: haloIn 1600ms var(--ease-signature) 240ms both;
+  animation: haloIn 1600ms var(--ease-signature) 240ms backwards;
   transition: opacity 900ms var(--ease-signature);
 }
 
@@ -3720,6 +3720,7 @@ button {
 /* Soft light pool that keeps the headline crisp over the halo */
 .hero-text {
   position: relative;
+  width: 100%; /* stable box: the light pool must not move when web fonts swap in */
 }
 
 .hero-text::before {
@@ -3786,7 +3787,6 @@ button:focus-visible,
 [tabindex]:focus-visible {
   outline: 2px solid var(--focus-color);
   outline-offset: 3px;
-  border-radius: 6px;
 }
 
 .nav-link:focus-visible {
@@ -4087,6 +4087,7 @@ button:disabled {
     inset -8px -12px 20px rgba(130, 90, 200, 0.28),
     inset 6px 8px 14px rgba(255, 255, 255, 0.65),
     0 18px 34px rgba(130, 90, 200, 0.2);
+  pointer-events: none;
   animation: orbFloat 11s var(--ease-ambient) infinite;
 }
 

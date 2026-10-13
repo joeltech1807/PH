@@ -364,6 +364,7 @@ const testimonialsData = [
     : { observe: reveal, unobserve() {} };
 
   fadeEls.forEach((el) => fadeObserver.observe(el));
+  window.__uhhReveal = true; // tells the <head> failsafe that reveals are handled
 
   /* ── One-shot reveals for non-.fade-in elements (e.g. CTA backdrop) ──── */
   if ('IntersectionObserver' in window) {
