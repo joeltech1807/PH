@@ -45,6 +45,125 @@ const majorEvents = [
   }
 ];
 
+/* ─────────────────────────────────────────────────────────────────────────
+   TESTIMONIALS DATA
+   ─────────────────────────────────────────────────────────────────────────
+   NOTE: The testimonials below are sample placeholder entries created for
+   design & development purposes. Replace them with genuine client feedback
+   before presenting this section publicly as real verified reviews.
+   ─────────────────────────────────────────────────────────────────────────
+   To add a genuine testimonial, append an object with:
+     name     — Display name (e.g. "Priya R." — use initials for privacy)
+     rating   — Number from 1–5
+     text     — Short, authentic feedback (1–4 sentences)
+   ─────────────────────────────────────────────────────────────────────────
+*/
+const testimonialsData = [
+  {
+    name: 'Priya R.',
+    rating: 5,
+    text: 'Every session with Jennifer felt like a gentle reset for my soul. I came in exhausted and left feeling lighter than I have in years.'
+  },
+  {
+    name: 'Ananya M.',
+    rating: 5,
+    text: 'I was struggling with sleep and anxiety for months. After just a few healing sessions, I noticed a remarkable shift — calmer nights, clearer mornings.'
+  },
+  {
+    name: 'Shalini T.',
+    rating: 5,
+    text: 'Jennifer has a rare gift for making you feel completely safe. Her compassion and dedication to healing is evident in every moment of the session.'
+  },
+  {
+    name: 'Deepa N.',
+    rating: 5,
+    text: 'Universe Healing Haven is a truly special place. I feel hopeful and at peace every time I leave. Grateful for Jennifer\'s guidance and warmth.'
+  },
+  {
+    name: 'Kavitha S.',
+    rating: 5,
+    text: 'The energy work Jennifer does is profound. I walked in feeling scattered and overwhelmed — I walked out grounded, calm, and clear.'
+  },
+  {
+    name: 'Meera P.',
+    rating: 5,
+    text: 'I have tried many wellness practices but nothing has felt as transformative as the healing sessions here. Truly from the heart.'
+  },
+  {
+    name: 'Roshni K.',
+    rating: 5,
+    text: 'Jennifer\'s healing touched areas of my life I didn\'t even know were blocked. I feel more myself than I have in a very long time.'
+  },
+  {
+    name: 'Lalitha V.',
+    rating: 5,
+    text: 'A deeply nurturing experience. Jennifer holds space with such love and intention — I always leave feeling renewed and hopeful.'
+  },
+  {
+    name: 'Sunita B.',
+    rating: 5,
+    text: 'After my first session I slept peacefully for the first time in months. The healing is gentle yet incredibly powerful. Highly recommended.'
+  }
+];
+
+/* ─────────────────────────────────────────────────────────────────────────
+   BUILD MARQUEE TESTIMONIALS
+   Duplicates cards within each track so the loop is seamless.
+   Row 1 uses the full set; Row 2 uses a slightly rotated subset for variety.
+   ─────────────────────────────────────────────────────────────────────────
+*/
+(function buildMarquee() {
+  const STAR_FILLED = '<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  const STAR_EMPTY  = '<svg viewBox="0 0 24 24" class="star-empty"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  const QUOTE_ICON  = '<svg class="testimonial-quote-icon" viewBox="0 0 32 32"><path d="M10 8c-3.3 0-6 2.7-6 6v10h10V14H8c0-1.1.9-2 2-2V8zm14 0c-3.3 0-6 2.7-6 6v10h10V14h-6c0-1.1.9-2 2-2V8z"/></svg>';
+
+  function initials(name) {
+    return name.split(' ').map(function (w) { return w[0]; }).join('').toUpperCase().slice(0, 2);
+  }
+
+  function stars(rating) {
+    var html = '';
+    for (var i = 1; i <= 5; i++) {
+      html += i <= rating ? STAR_FILLED : STAR_EMPTY;
+    }
+    return html;
+  }
+
+  function buildCard(t) {
+    return (
+      '<article class="testimonial-card">' +
+        '<div class="testimonial-card-top">' +
+          '<div class="testimonial-avatar">' + initials(t.name) + '</div>' +
+          '<div class="testimonial-meta">' +
+            '<div class="testimonial-name">' + t.name + '</div>' +
+            '<div class="testimonial-stars">' + stars(t.rating) + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="testimonial-body">' +
+          QUOTE_ICON +
+          '<p class="testimonial-text">' + t.text + '</p>' +
+        '</div>' +
+      '</article>'
+    );
+  }
+
+  function fillTrack(trackId, items) {
+    var track = document.getElementById(trackId);
+    if (!track) return;
+    // Build single set of cards
+    var cardsHTML = items.map(buildCard).join('');
+    // Duplicate for seamless loop (translateX(-50%) → translateX(0%) animation)
+    track.innerHTML = cardsHTML + cardsHTML;
+  }
+
+  // Row 1: all testimonials
+  fillTrack('marquee-track-1', testimonialsData);
+
+  // Row 2: rotate array by 3 for visual variety
+  var row2 = testimonialsData.slice(3).concat(testimonialsData.slice(0, 3));
+  fillTrack('marquee-track-2', row2);
+})();
+
 (function () {
   'use strict';
 
