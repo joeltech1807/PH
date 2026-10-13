@@ -24,7 +24,7 @@ const majorEvents = [
     title: '2nd International Conference on “Smart Systems for Electrical, Electronics, Communication and Computer Engineering”',
     shortTitle: 'ICSSECC 26',
     description: 'A premier gathering of global researchers, engineers and innovators advancing the frontiers of smart systems across electrical, electronics, communication and computing domains.',
-    image: 'assets/event_icssecc_26.jpg',
+    image: 'assets/event_icssecc_26.webp',
     imageAlt: 'ICSSECC 26 — Smart Systems International Conference',
     links: [
       { label: 'Poster',   url: '#', newTab: false },
@@ -37,7 +37,7 @@ const majorEvents = [
     title: '3rd International Conference on “Materials, Design and Manufacturing for Sustainable Environment”',
     shortTitle: 'ICMDMSE 2026',
     description: 'Bringing together thought leaders in sustainable materials science, advanced manufacturing and eco-conscious design to shape the future of responsible engineering.',
-    image: 'assets/event_icmdmse_2026.jpg',
+    image: 'assets/event_icmdmse_2026.webp',
     imageAlt: 'ICMDMSE 2026 — Materials, Design & Manufacturing Conference',
     links: [
       { label: 'Website', url: '#', newTab: true }
@@ -53,6 +53,12 @@ const majorEvents = [
     const canvas  = document.getElementById('scroll-bg-canvas');
     if (!canvas) return;
 
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      canvas.style.display = 'none';
+      return;
+    }
+
+    const isMobile = window.innerWidth < 768 || window.matchMedia('(max-width: 768px)').matches;
     const ctx     = canvas.getContext('2d');
     const TOTAL   = 75;
     const FOLDER  = 'ezgif-6b3159b15437ef17-jpg/';
@@ -63,10 +69,11 @@ const majorEvents = [
     let   rafId   = null;
     let   ready   = false;
 
-    /* ── Resize canvas to full viewport ── */
+    /* ── Resize canvas to viewport with capped DPR for mobile efficiency ── */
     function resizeCanvas() {
-      canvas.width  = window.innerWidth  * window.devicePixelRatio;
-      canvas.height = window.innerHeight * window.devicePixelRatio;
+      const dpr = Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 1.5);
+      canvas.width  = Math.floor(window.innerWidth  * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
       canvas.style.width  = window.innerWidth  + 'px';
       canvas.style.height = window.innerHeight + 'px';
       drawFrame(currentFrame);
@@ -93,60 +100,93 @@ const majorEvents = [
       ctx.drawImage(img, sx, sy, sw, sh);
     }
 
-    /* ── Animation loop with smooth lerp ── */
+    /* ── Animation loop: runs ONLY while moving, pauses when idle ── */
     function tick() {
-      rafId = requestAnimationFrame(tick);
-      if (!ready) return;
-
+      if (!ready) {
+        rafId = null;
+        return;
+      }
       currentFrame += (targetFrame - currentFrame) * 0.12;
-      const rounded = Math.round(currentFrame);
-      drawFrame(rounded);
+      drawFrame(currentFrame);
+
+      if (Math.abs(targetFrame - currentFrame) > 0.05) {
+        rafId = requestAnimationFrame(tick);
+      } else {
+        currentFrame = targetFrame;
+        drawFrame(currentFrame);
+        rafId = null;
+      }
     }
 
     /* ── Map scroll position → frame index ── */
     function onScroll() {
-      const scrollTop  = window.scrollY;
-      const maxScroll  = document.documentElement.scrollHeight - window.innerHeight;
-      const progress   = maxScroll > 0 ? Math.min(scrollTop / maxScroll, 1) : 0;
+      const scrollTop = window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress  = maxScroll > 0 ? Math.min(scrollTop / maxScroll, 1) : 0;
       targetFrame = progress * (TOTAL - 1);
+      if (!rafId && ready) {
+        rafId = requestAnimationFrame(tick);
+      }
     }
 
-    /* ── Preload all frames ── */
     function pad(n) { return String(n).padStart(3, '0'); }
 
-    for (let i = 0; i < TOTAL; i++) {
-      const img = new Image();
-      img.src = FOLDER + 'ezgif-frame-' + pad(i + 1) + '.jpg';
-      img.onload = function () {
-        loaded++;
-        if (loaded === 1) {
-          ready = true;
-          drawFrame(0);
+    /* Mobile: only load the 1st frame to preserve aesthetic without downloading 3MB */
+    if (isMobile) {
+      const firstImg = new Image();
+      firstImg.src = FOLDER + 'ezgif-frame-001.jpg';
+      firstImg.onload = function () {
+        frames[0] = firstImg;
+        ready = true;
+        resizeCanvas();
+        drawFrame(0);
+      };
+      window.addEventListener('resize', resizeCanvas, { passive: true });
+      return;
+    }
+
+    /* Desktop: load 1st frame immediately, defer remainder to idle time */
+    const firstImg = new Image();
+    firstImg.src = FOLDER + 'ezgif-frame-001.jpg';
+    firstImg.onload = function () {
+      loaded++;
+      ready = true;
+      resizeCanvas();
+      drawFrame(0);
+
+      const loadRemaining = function () {
+        for (let i = 1; i < TOTAL; i++) {
+          const img = new Image();
+          img.src = FOLDER + 'ezgif-frame-' + pad(i + 1) + '.jpg';
+          frames[i] = img;
         }
       };
-      frames[i] = img;
-    }
 
-    /* ── Boot ── */
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(loadRemaining, { timeout: 2000 });
+      } else {
+        setTimeout(loadRemaining, 400);
+      }
+    };
+    frames[0] = firstImg;
+
     resizeCanvas();
-    window.addEventListener('resize',  resizeCanvas, { passive: true });
-    window.addEventListener('scroll',  onScroll,     { passive: true });
-    tick();
-    onScroll();
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+    window.addEventListener('scroll', onScroll,     { passive: true });
   })();
 
-  /* ── Scroll: Header ──────────────────────────────────────────────────── */
+  /* ── Header Scroll State ─────────────────────────────────────────────── */
   const header = document.getElementById('site-header');
+  let headerScrolled = false;
 
   function handleHeaderScroll() {
-    if (window.scrollY > 40) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
+    if (!header) return;
+    const isScrolled = window.scrollY > 40;
+    if (isScrolled !== headerScrolled) {
+      headerScrolled = isScrolled;
+      header.classList.toggle('scrolled', isScrolled);
     }
   }
-
-  window.addEventListener('scroll', handleHeaderScroll, { passive: true });
   handleHeaderScroll();
 
   /* ── Mobile Navigation ───────────────────────────────────────────────── */
@@ -476,57 +516,75 @@ const majorEvents = [
     });
   })();
 
-  /* ── Active Nav Highlight on Scroll ──────────────────────────────────── */
+  /* ── Active Nav Highlight on Scroll (with cached layout geometry) ─── */
   const navLinks = document.querySelectorAll('.nav-link');
-  const sections = document.querySelectorAll('section[id]');
+  let cachedSections = [];
 
+  function updateSectionGeometry() {
+    cachedSections = Array.from(document.querySelectorAll('section[id]')).map((sec) => ({
+      id: sec.getAttribute('id') === 'founder' ? 'about' : sec.getAttribute('id'),
+      top: sec.offsetTop,
+      bottom: sec.offsetTop + sec.offsetHeight
+    }));
+  }
+  updateSectionGeometry();
+  window.addEventListener('resize', updateSectionGeometry, { passive: true });
+
+  let activeNavId = '';
   function highlightNav() {
     const scrollPos = window.scrollY + 120;
-
-    sections.forEach((section) => {
-      const top = section.offsetTop;
-      const height = section.offsetHeight;
-      let id = section.getAttribute('id');
-
-      // Map founder section to #about nav link
-      if (id === 'founder') {
-        id = 'about';
+    for (let i = 0; i < cachedSections.length; i++) {
+      const s = cachedSections[i];
+      if (scrollPos >= s.top && scrollPos < s.bottom) {
+        if (activeNavId !== s.id) {
+          activeNavId = s.id;
+          navLinks.forEach((link) => {
+            link.style.color = (link.getAttribute('href') === '#' + s.id) ? '#C396FC' : '';
+          });
+        }
+        break;
       }
-
-      if (scrollPos >= top && scrollPos < top + height) {
-        navLinks.forEach((link) => {
-          link.style.color = '';
-          if (link.getAttribute('href') === '#' + id) {
-            link.style.color = '#C396FC';
-          }
-        });
-      }
-    });
+    }
   }
 
-  window.addEventListener('scroll', highlightNav, { passive: true });
-  highlightNav();
-
-  /* ── WhatsApp float: show after scroll ───────────────────────────────── */
+  /* ── WhatsApp float: toggle with state check ─────────────────────────── */
   const waFloat = document.querySelector('.whatsapp-float');
+  let waFloatVisible = false;
+
   if (waFloat) {
     waFloat.style.opacity = '0';
     waFloat.style.transform = 'scale(0.8)';
-    waFloat.style.transition = 'opacity 0.5s, transform 0.5s';
-
-    function showWaFloat() {
-      if (window.scrollY > 300) {
-        waFloat.style.opacity = '1';
-        waFloat.style.transform = 'scale(1)';
-      } else {
-        waFloat.style.opacity = '0';
-        waFloat.style.transform = 'scale(0.8)';
-      }
-    }
-
-    window.addEventListener('scroll', showWaFloat, { passive: true });
-    showWaFloat();
+    waFloat.style.pointerEvents = 'none';
+    waFloat.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
   }
+
+  function showWaFloat() {
+    if (!waFloat) return;
+    const shouldShow = window.scrollY > 300;
+    if (shouldShow !== waFloatVisible) {
+      waFloatVisible = shouldShow;
+      waFloat.style.opacity = shouldShow ? '1' : '0';
+      waFloat.style.transform = shouldShow ? 'scale(1)' : 'scale(0.8)';
+      waFloat.style.pointerEvents = shouldShow ? 'auto' : 'none';
+    }
+  }
+
+  /* ── Single Unified RAF Scroll Listener (Zero Layout Thrashing) ─────── */
+  let scrollTicking = false;
+  function onScrollUnified() {
+    if (!scrollTicking) {
+      requestAnimationFrame(() => {
+        handleHeaderScroll();
+        highlightNav();
+        showWaFloat();
+        scrollTicking = false;
+      });
+      scrollTicking = true;
+    }
+  }
+
+  window.addEventListener('scroll', onScrollUnified, { passive: true });
+  onScrollUnified();
 
   /* ── Console branding ───────────────────────────────────────────────── */
   console.log(
