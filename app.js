@@ -345,6 +345,14 @@ const testimonialsData = [
 
   fadeEls.forEach((el) => fadeObserver.observe(el));
 
+  /* ── Footer: run decorative animations only while footer is on screen ── */
+  const siteFooter = document.querySelector('.site-footer');
+  if (siteFooter) {
+    new IntersectionObserver((entries) => {
+      siteFooter.classList.toggle('in-view', entries[0].isIntersecting);
+    }).observe(siteFooter);
+  }
+
   /* ── Smooth scroll: Anchor links ─────────────────────────────────────── */
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener('click', function (e) {

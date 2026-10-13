@@ -669,16 +669,56 @@
 
   <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
   <footer class="site-footer">
+    <!-- Decorative layer: purely visual, sits behind all footer content -->
+    <div class="footer-deco" aria-hidden="true">
+      <div class="footer-glow footer-glow--tl"></div>
+      <div class="footer-glow footer-glow--br"></div>
+      <svg class="footer-energy" viewBox="0 0 560 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M-20 230 C 120 130, 270 70, 560 46" stroke="#D6B4FF" stroke-width="1" opacity="0.14"/>
+        <path d="M-20 266 C 150 178, 310 116, 560 104" stroke="#E6D0FF" stroke-width="0.8" opacity="0.09"/>
+        <path d="M-20 196 C 90 104, 210 34, 420 -10" stroke="#E0C6FF" stroke-width="0.7" stroke-dasharray="2 6" opacity="0.16"/>
+        <circle cx="300" cy="91" r="1.6" fill="#E6D0FF" opacity="0.35"/>
+        <circle cx="452" cy="104" r="1.2" fill="#D6B4FF" opacity="0.3"/>
+      </svg>
+      <div class="footer-watermark">
+        <div class="footer-watermark-halo"></div>
+        <svg class="footer-ripples" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="31" stroke="#D6B4FF" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.08"/>
+          <circle cx="50" cy="50" r="39" stroke="#E6D0FF" stroke-width="1" vector-effect="non-scaling-stroke" stroke-dasharray="1 5" opacity="0.12"/>
+          <circle cx="50" cy="50" r="47" stroke="#D6B4FF" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.05"/>
+        </svg>
+        <div class="footer-watermark-mark"></div>
+      </div>
+      <div class="footer-waves">
+        <div class="footer-waves-track">
+          <svg viewBox="0 0 1440 110" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 80 C 180 80 540 46 720 46 C 900 46 1260 80 1440 80 L1440 110 L0 110 Z" fill="#D6B4FF" opacity="0.03"/>
+            <path d="M0 60 C 240 20 480 100 720 60 S 1200 100 1440 60" stroke="#D6B4FF" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.16"/>
+            <path d="M0 80 C 180 80 540 46 720 46 C 900 46 1260 80 1440 80" stroke="#E6D0FF" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.11"/>
+            <path d="M0 96 C 200 96 400 72 720 80 S 1240 96 1440 96" stroke="#E0C6FF" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.08"/>
+          </svg>
+          <svg viewBox="0 0 1440 110" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 80 C 180 80 540 46 720 46 C 900 46 1260 80 1440 80 L1440 110 L0 110 Z" fill="#D6B4FF" opacity="0.03"/>
+            <path d="M0 60 C 240 20 480 100 720 60 S 1200 100 1440 60" stroke="#D6B4FF" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.16"/>
+            <path d="M0 80 C 180 80 540 46 720 46 C 900 46 1260 80 1440 80" stroke="#E6D0FF" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.11"/>
+            <path d="M0 96 C 200 96 400 72 720 80 S 1240 96 1440 96" stroke="#E0C6FF" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.08"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
     <div class="footer-inner">
       <div class="footer-top">
-        <div class="footer-brand">
+        <div class="footer-brand fade-in">
           <picture>
             <source srcset="logow.webp" type="image/webp">
             <img src="logow.png" alt="Universe Healing Haven Logo" class="footer-logo-img" width="2172" height="724" loading="lazy" decoding="async" />
           </picture>
-          <p class="footer-tagline">Heal &nbsp;·&nbsp; Balance &nbsp;·&nbsp; Wellness<br />A peaceful space for your wellbeing journey.</p>
+          <p class="footer-tagline">Heal &nbsp;&middot;&nbsp; Balance &nbsp;&middot;&nbsp; Wellness</p>
+          <span class="footer-accent" aria-hidden="true"></span>
+          <p class="footer-desc">A peaceful space for your wellbeing journey.</p>
         </div>
-        <nav class="footer-nav-col">
+        <nav class="footer-nav-col fade-in" data-delay="100" aria-label="Footer">
           <p class="footer-heading">Navigate</p>
           <div class="footer-nav">
             <a href="#home" class="footer-nav-link">Home</a>
@@ -690,22 +730,39 @@
             <a href="#contact" class="footer-nav-link">Contact</a>
           </div>
         </nav>
-        <div class="footer-connect">
+        <div class="footer-connect fade-in" data-delay="200">
           <p class="footer-heading">Connect</p>
-          <a href="https://www.instagram.com/universe_healing_center?utm_source=qr&igsh=d3Jrejk5ZndkZHhl" target="_blank" rel="noopener" class="footer-social-link">Instagram</a>
-          <a href="https://wa.me/919493132940" target="_blank" rel="noopener" class="footer-social-link">WhatsApp</a>
+          <a href="https://www.instagram.com/universe_healing_center?utm_source=qr&igsh=d3Jrejk5ZndkZHhl" target="_blank" rel="noopener" class="footer-social-link">
+            <span class="footer-social-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="3" width="18" height="18" rx="5"/>
+                <circle cx="12" cy="12" r="4.2"/>
+                <circle cx="17.4" cy="6.6" r="0.9" fill="currentColor" stroke="none"/>
+              </svg>
+            </span>
+            Instagram
+          </a>
+          <a href="https://wa.me/919493132940" target="_blank" rel="noopener" class="footer-social-link">
+            <span class="footer-social-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2.06 22.574a.5.5 0 00.608.608l5.406-1.378A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.66 0-3.216-.5-4.512-1.357l-.315-.196-3.268.855.855-3.268-.196-.315A7.953 7.953 0 014 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/>
+              </svg>
+            </span>
+            WhatsApp
+          </a>
+        </div>
+        <div class="footer-message fade-in" data-delay="150">
+          <span class="footer-message-mark" aria-hidden="true"></span>
+          <p class="footer-message-title">Find Your Calm. Rediscover Your Balance.</p>
+          <p class="footer-message-text">A gentle reminder to pause, reconnect, and nurture your wellbeing.</p>
         </div>
       </div>
+      <div class="footer-divider" aria-hidden="true"><span class="footer-divider-mark"></span></div>
       <div class="footer-bottom">
         <p class="footer-copy">&copy; 2026 Universe Healing Haven. All rights reserved.</p>
         <p class="footer-disclaimer">Our services are complementary wellness practices and are not intended to replace medical diagnosis, treatment or prescribed medication.</p>
       </div>
-    </div>
-    <div class="footer-botanical">
-      <svg viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0 80 Q50 40 100 60 Q150 80 200 50 Q250 20 300 45 Q350 70 400 40" stroke="#D6B4FF" stroke-width="1" fill="none" opacity="0.5"/>
-        <path d="M0 95 Q60 70 120 80 Q180 90 240 65 Q300 40 360 60 Q390 70 400 60" stroke="#E6D0FF" stroke-width="0.8" fill="none" opacity="0.35"/>
-      </svg>
     </div>
   </footer>
 
