@@ -1811,11 +1811,13 @@ button {
   display: block;
   font-family: var(--sans);
   font-size: 0.58rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: #9B7DD4;
   font-weight: 500;
   margin-top: 4px;
+  line-height: 1.4;
+  max-width: 250px;
 }
 
 /* ── Text Column ── */
