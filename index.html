@@ -70,6 +70,7 @@
         <a href="#wellness" class="nav-link">Wellness</a>
         <a href="#journey" class="nav-link">Journey</a>
         <a href="#events" class="nav-link">Events</a>
+        <a href="#testimonials" class="nav-link">Stories</a>
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
       <a href="#contact" class="btn-book">Book a Session &rarr;</a>
@@ -92,6 +93,7 @@
     <a href="#wellness" class="mobile-nav-link">Wellness</a>
     <a href="#journey" class="mobile-nav-link">Journey</a>
     <a href="#events" class="mobile-nav-link">Events</a>
+    <a href="#testimonials" class="mobile-nav-link">Stories</a>
     <a href="#contact" class="mobile-nav-link">Contact</a>
     <a href="#contact" class="btn-book mobile-book">Book a Session &rarr;</a>
   </div>
@@ -501,14 +503,114 @@
           <p class="eyebrow fade-in" data-delay="0" style="color: #C396FC;">Meet the Founder</p>
           <h2 class="section-headline fade-in" data-delay="80">Jennifer<br /><em>John</em></h2>
           <p class="founder-subtitle fade-in" data-delay="160">Founder of Universe Healing Haven &amp; Healer</p>
-          <p class="founder-body fade-in" data-delay="240">Jennifer John created Universe Healing Haven with a simple intention — to create a peaceful space where people can pause, reconnect with themselves and make room for healing.</p>
-          <p class="founder-body fade-in" data-delay="320" style="margin-top:0;">Through meditation, energy-based healing and mindful practices, she offers a gentle space for people to slow down, find balance and reconnect with their inner sense of peace.</p>
+          <p class="founder-body fade-in" data-delay="240">Jennifer John is a wonderful and compassionate healer dedicated to serving humanity and nurturing holistic well-being. Guided by her Guru's blessings, she strives to ease suffering, inspire positivity, and bring hope, peace, and comfort to every healing journey.</p>
           <div class="founder-quote-box fade-in" data-delay="400">
             <div class="founder-quote-line"></div>
             <blockquote class="founder-quote-text">&ldquo;A space to pause, breathe and return to yourself.&rdquo;</blockquote>
           </div>
           <a href="#contact" class="btn-text-link founder-cta fade-in" data-delay="480">Know More &rarr;</a>
         </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════ STORIES OF HOPE & WELLBEING ═══════════════════════════════ -->
+    <section class="testimonials-section" id="testimonials">
+      <div class="testimonials-inner-light" aria-hidden="true"></div>
+      <div class="section-inner">
+        <!-- Section Header -->
+        <div class="testimonials-header fade-in">
+          <p class="eyebrow" style="color: #9B7DD4;">Client Voices</p>
+          <h2 class="section-headline">Stories of <em>Hope &amp; Wellbeing</em></h2>
+          <div class="testimonials-quote-badge" aria-hidden="true">
+            <svg viewBox="0 0 32 32" fill="currentColor">
+              <path d="M10 8c-3.3 0-6 2.7-6 6v10h10V14H8c0-1.1.9-2 2-2V8zm14 0c-3.3 0-6 2.7-6 6v10h10V14h-6c0-1.1.9-2 2-2V8z"/>
+            </svg>
+          </div>
+          <p class="testimonials-intro">&ldquo;Every journey is unique. Discover personal experiences of care, calmness, positivity, and inner balance.&rdquo;</p>
+        </div>
+
+        <!-- Dynamic Overall Rating Summary (Only visible when approved reviews exist) -->
+        <div class="overall-rating-wrap" id="overall-rating-wrap" style="display: none;">
+          <div class="overall-rating-pill">
+            <div class="overall-stars" id="overall-stars"></div>
+            <span class="overall-text" id="overall-text"></span>
+          </div>
+        </div>
+
+        <!-- Testimonials Cards Grid -->
+        <div class="testimonials-grid" id="testimonials-grid">
+          <!-- Populated dynamically by app.js (Includes approved genuine reviews + 5 sample community testimonials) -->
+        </div>
+
+        <!-- Share Your Experience Form -->
+        <div class="review-form-card fade-in" id="share-experience">
+          <div class="review-form-header">
+            <span class="review-form-eyebrow">Feedback</span>
+            <h3 class="review-form-title">Share Your Experience</h3>
+            <p class="review-form-subtitle">Your feedback helps us understand your experience and continue creating a welcoming space for wellbeing.</p>
+          </div>
+
+          <form id="review-form" class="review-form" novalidate>
+            <div class="form-row">
+              <div class="form-group form-group--half">
+                <label for="review-name" class="form-label">Your Name <span class="form-required">*</span></label>
+                <input type="text" id="review-name" name="name" class="form-input" placeholder="e.g. Maya S." required maxlength="80" autocomplete="name" />
+                <span class="review-field-error" id="name-error"></span>
+              </div>
+
+              <div class="form-group form-group--half">
+                <label class="form-label">Your Rating <span class="form-required">*</span></label>
+                <div class="star-rating-selector" id="star-rating-selector" role="radiogroup" aria-label="Select a rating from 1 to 5 stars">
+                  <button type="button" class="star-btn" data-value="1" role="radio" aria-checked="false" aria-label="1 star">
+                    <svg viewBox="0 0 24 24" class="star-icon"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  </button>
+                  <button type="button" class="star-btn" data-value="2" role="radio" aria-checked="false" aria-label="2 stars">
+                    <svg viewBox="0 0 24 24" class="star-icon"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  </button>
+                  <button type="button" class="star-btn" data-value="3" role="radio" aria-checked="false" aria-label="3 stars">
+                    <svg viewBox="0 0 24 24" class="star-icon"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  </button>
+                  <button type="button" class="star-btn" data-value="4" role="radio" aria-checked="false" aria-label="4 stars">
+                    <svg viewBox="0 0 24 24" class="star-icon"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  </button>
+                  <button type="button" class="star-btn" data-value="5" role="radio" aria-checked="false" aria-label="5 stars">
+                    <svg viewBox="0 0 24 24" class="star-icon"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  </button>
+                </div>
+                <div class="rating-helper-row">
+                  <span class="rating-helper-text" id="rating-helper-text">Select a rating from 1 to 5 stars</span>
+                </div>
+                <input type="hidden" id="review-rating" name="rating" value="0" />
+                <span class="review-field-error" id="rating-error"></span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="review-text" class="form-label">Your Experience <span class="form-required">*</span></label>
+              <textarea id="review-text" name="experience" class="form-input form-textarea" placeholder="How did your session or experience with Universe Healing Haven feel?" rows="4" required minlength="10" maxlength="1000"></textarea>
+              <div class="review-char-count"><span id="review-char-num">0</span> / 1000 characters</div>
+              <span class="review-field-error" id="text-error"></span>
+            </div>
+
+            <div class="review-form-actions">
+              <button type="submit" id="review-submit-btn" class="btn-primary review-submit-btn">
+                <span>Submit Review</span> &rarr;
+              </button>
+              <span class="review-moderation-note">&#128274; All reviews are reviewed before being published to protect community integrity.</span>
+            </div>
+
+            <div class="review-success-msg" id="review-success-msg" style="display: none;" role="status">
+              <div class="review-success-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="review-success-content">
+                <h4>Thank You for Sharing Your Experience!</h4>
+                <p>Your review has been received with gratitude and will be published after review.</p>
+              </div>
+            </div>
+          </form>
+        </div>
+
       </div>
     </section>
 
@@ -658,6 +760,7 @@
             <a href="#services" class="footer-nav-link">Services</a>
             <a href="#wellness" class="footer-nav-link">Wellness Support</a>
             <a href="#events" class="footer-nav-link">Events</a>
+            <a href="#testimonials" class="footer-nav-link">Stories</a>
             <a href="#contact" class="footer-nav-link">Contact</a>
           </div>
         </nav>
