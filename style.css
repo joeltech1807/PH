@@ -220,16 +220,8 @@ button {
 }
 
 /* â”€â”€â”€ Fade-in Animation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.fade-in {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.85s var(--ease-slow), transform 0.85s var(--ease-slow);
-}
-
-.fade-in.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+/* Reveal states live in the MOTION & DEPTH LAYER at the end of this file
+   (scoped to html.js so content stays visible without JavaScript). */
 
 /* â”€â”€â”€ Buttons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .btn-primary {
@@ -3558,5 +3550,662 @@ button {
   }
   .scroll-bg-canvas {
     display: none !important;
+  }
+}
+
+/* ==========================================================================
+   MOTION & DEPTH LAYER
+   One motion system for the whole page. Personality: premium and calm --
+   one signature ease-out curve, no overshoot or bounce, short staggers.
+   Every hidden-before-reveal state is scoped to html.js, so content is
+   never hidden when JavaScript is unavailable.
+   ========================================================================== */
+:root {
+  /* Easing */
+  --ease-signature: cubic-bezier(0.22, 1, 0.36, 1);  /* entrances, hovers (80% of motion) */
+  --ease-ambient:   cubic-bezier(0.45, 0, 0.55, 1);  /* looping, sine-like */
+  --ease-press:     cubic-bezier(0.2, 0, 0, 1);      /* press feedback */
+
+  /* Durations */
+  --dur-micro:  180ms;   /* small UI state changes */
+  --dur-ui:     260ms;   /* buttons and links */
+  --dur-card:   320ms;   /* card interactions */
+  --dur-reveal: 750ms;   /* scroll reveals */
+  --dur-image:  1100ms;  /* image unmasking */
+  --dur-hero:   1100ms;  /* hero entrance */
+  --dur-ambient: 12s;    /* ambient cycles (6-15s range) */
+
+  /* Distances, scale, stagger */
+  --stagger:          80ms;
+  --reveal-y:         22px;
+  --reveal-y-child:   14px;
+  --lift-card:        -6px;
+  --lift-btn:         -2px;
+  --press-scale:      0.97;
+  --image-from-scale: 1.08;
+
+  /* Focus */
+  --focus-color: #9B7DD4;
+}
+
+/* ---------- Scroll reveals ---------------------------------------------- */
+.js .fade-in:not(.visible) {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y), 0);
+}
+
+.js .fade-in:not(.is-settled) {
+  transition:
+    opacity var(--dur-reveal) var(--ease-signature),
+    transform var(--dur-reveal) var(--ease-signature);
+}
+
+/* Header groups: the block stays put, its children arrive in a short stagger */
+.js .fade-in[data-stagger] {
+  opacity: 1;
+  transform: none;
+}
+
+.js .fade-in[data-stagger]:not(.visible) > * {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-y-child), 0);
+}
+
+.js .fade-in[data-stagger]:not(.is-settled) > * {
+  transition:
+    opacity var(--dur-reveal) var(--ease-signature),
+    transform var(--dur-reveal) var(--ease-signature);
+  transition-delay: calc(var(--i, 0) * var(--stagger));
+}
+
+/* ---------- Hero: one orchestrated entrance (CSS only, ~1.3s) ------------
+   Runs on first paint without waiting for JavaScript, so the headline
+   (the page's LCP element) is never gated behind script execution. */
+.hero-eyebrow {
+  animation: heroRise var(--dur-hero) var(--ease-signature) 80ms both;
+}
+
+.hl-line {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  /* room for ascenders, descenders and the italic overhang */
+  padding: 0.04em 0.08em 0.14em;
+  margin: -0.04em -0.08em -0.14em;
+}
+
+.hl-line-inner {
+  display: inline-block;
+  animation: heroLine var(--dur-hero) var(--ease-signature) 160ms both;
+}
+
+.hl-line + br + .hl-line .hl-line-inner {
+  animation-delay: 280ms;
+}
+
+.hero-sub {
+  animation: heroRise var(--dur-hero) var(--ease-signature) 480ms both;
+}
+
+.hero-ctas > * {
+  animation: heroRise var(--dur-hero) var(--ease-signature) 600ms both;
+}
+
+.hero-ctas > * + * {
+  animation-delay: 680ms;
+}
+
+@keyframes heroRise {
+  from { opacity: 0; transform: translate3d(0, 16px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes heroLine {
+  from { transform: translate3d(0, 108%, 0); }
+  to   { transform: none; }
+}
+
+/* Organic hero lines draw themselves in */
+.hero-organic-line path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: lineDraw 2400ms var(--ease-signature) 500ms forwards;
+}
+
+@keyframes lineDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ---------- Hero 3D halo -------------------------------------------------- */
+.hero-halo {
+  position: absolute;
+  inset: 74px 0 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-halo-fallback,
+.hero-halo-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-halo-fallback {
+  animation: haloIn 1600ms var(--ease-signature) 240ms both;
+  transition: opacity 900ms var(--ease-signature);
+}
+
+.hero-halo-canvas {
+  opacity: 0;
+  transform: scale(0.97);
+  transition: opacity 1600ms var(--ease-signature), transform 1600ms var(--ease-signature);
+}
+
+.hero-halo.is-3d .hero-halo-canvas {
+  opacity: 1;
+  transform: none;
+}
+
+.hero-halo.is-3d .hero-halo-fallback {
+  opacity: 0;
+}
+
+@keyframes haloIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Soft light pool that keeps the headline crisp over the halo */
+.hero-text {
+  position: relative;
+}
+
+.hero-text::before {
+  content: '';
+  position: absolute;
+  inset: -12% -10%;
+  z-index: -1;
+  background: radial-gradient(ellipse 50% 46% at 50% 50%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.22) 55%, transparent 75%);
+  pointer-events: none;
+}
+
+/* ---------- Buttons & links ---------------------------------------------- */
+.btn-primary,
+.btn-secondary,
+.btn-outline,
+.btn-book,
+.btn-whatsapp,
+.btn-submit,
+.btn-cta-primary,
+.btn-cta-outline {
+  transition:
+    background var(--dur-ui) var(--ease-signature),
+    color var(--dur-ui) var(--ease-signature),
+    border-color var(--dur-ui) var(--ease-signature),
+    box-shadow var(--dur-ui) var(--ease-signature),
+    transform var(--dur-ui) var(--ease-signature);
+}
+
+.btn-primary:active,
+.btn-secondary:active,
+.btn-outline:active,
+.btn-book:active,
+.btn-whatsapp:active,
+.btn-submit:active,
+.btn-cta-primary:active,
+.btn-cta-outline:active {
+  transform: translate3d(0, 0, 0) scale(var(--press-scale));
+  transition-duration: 90ms;
+  transition-timing-function: var(--ease-press);
+}
+
+.btn-arrow {
+  display: inline-block;
+  transition: transform var(--dur-ui) var(--ease-signature);
+}
+
+a:hover > .btn-arrow,
+a:focus-visible > .btn-arrow,
+button:hover > .btn-arrow,
+button:focus-visible > .btn-arrow {
+  transform: translate3d(3px, 0, 0);
+}
+
+.btn-ghost:active,
+.btn-text-link:active,
+.nav-link:active,
+.footer-nav-link:active {
+  opacity: 0.75;
+}
+
+/* One consistent keyboard focus indicator */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.nav-link:focus-visible {
+  color: var(--lavender-deep);
+}
+
+.nav-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.form-radio-label input:focus-visible + span {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+.btn-submit.is-loading,
+.btn-submit:disabled {
+  cursor: progress;
+  transform: none;
+  box-shadow: 0 4px 14px rgba(155, 125, 212, 0.16);
+  background: linear-gradient(110deg, #E6D0FF 30%, #F3ECFF 50%, #E6D0FF 70%);
+  background-size: 220% 100%;
+  animation: btnShimmer 1.4s linear infinite;
+}
+
+@keyframes btnShimmer {
+  from { background-position: 120% 0; }
+  to   { background-position: -120% 0; }
+}
+
+/* Invalid field: one short, firm shake (no overshoot) */
+.form-input.is-invalid {
+  animation: fieldShake 320ms var(--ease-ambient) both;
+}
+
+@keyframes fieldShake {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  25%      { transform: translate3d(-6px, 0, 0); }
+  60%      { transform: translate3d(5px, 0, 0); }
+  85%      { transform: translate3d(-2px, 0, 0); }
+}
+
+/* Header + mobile navigation */
+.site-logo {
+  transition: opacity var(--dur-ui) var(--ease-signature);
+}
+
+.hamburger span {
+  transition: transform var(--dur-ui) var(--ease-signature), opacity var(--dur-ui) var(--ease-signature);
+}
+
+.hamburger:active span {
+  transform: scaleX(0.86);
+}
+
+.js .mobile-nav > a {
+  transition:
+    opacity 200ms var(--ease-signature),
+    transform 200ms var(--ease-signature),
+    color var(--dur-ui) var(--ease-signature);
+}
+
+.js .mobile-nav:not(.open) > a {
+  opacity: 0;
+  transform: translate3d(24px, 0, 0);
+}
+
+.js .mobile-nav.open > a {
+  transition-duration: 600ms, 600ms, var(--dur-ui);
+  transition-delay: calc(140ms + var(--i, 0) * 40ms), calc(140ms + var(--i, 0) * 40ms), 0ms;
+}
+
+/* ---------- Cards: restrained 3D depth ------------------------------------ */
+.why-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Composed transform: works with the reveal and the pointer tilt */
+.js [data-tilt].is-settled {
+  transform: perspective(1000px) translate3d(0, var(--lift, 0px), 0) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition:
+    transform var(--dur-card) var(--ease-signature),
+    box-shadow var(--dur-card) var(--ease-signature),
+    border-color var(--dur-ui) var(--ease-signature);
+}
+
+.js [data-tilt].is-settled:hover {
+  --lift: var(--lift-card);
+  box-shadow: 0 22px 50px rgba(120, 80, 190, 0.12), 0 6px 16px rgba(120, 80, 190, 0.06);
+  border-color: rgba(196, 150, 252, 0.55);
+}
+
+.js [data-tilt].is-tilting {
+  transition:
+    transform 140ms linear,
+    box-shadow var(--dur-card) var(--ease-signature),
+    border-color var(--dur-ui) var(--ease-signature);
+}
+
+/* Moving highlight that follows the pointer */
+.service-card::after,
+.why-card::after,
+.pillar-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, 0.5), rgba(230, 208, 255, 0.14) 40%, transparent 70%);
+  opacity: 0;
+  transition: opacity var(--dur-card) var(--ease-signature);
+  pointer-events: none;
+}
+
+.service-card:hover::after,
+.why-card:hover::after,
+.pillar-card:hover::after {
+  opacity: 1;
+}
+
+/* Icons sit on a nearer layer: they drift slightly further than the card */
+.service-icon,
+.why-icon,
+.pillar-icon {
+  position: relative;
+  z-index: 1;
+  transform: translate3d(calc(var(--px, 0) * 6px), calc(var(--py, 0) * 6px), 0);
+  transition: transform var(--dur-card) var(--ease-signature), background var(--dur-ui) var(--ease-signature);
+}
+
+/* Icon draw-in as each card reveals */
+.js .fade-in:not(.visible) .service-icon,
+.js .fade-in:not(.visible) .why-icon,
+.js .fade-in:not(.visible) .pillar-icon {
+  transform: scale(0.86);
+  opacity: 0;
+}
+
+.js .fade-in:not(.is-settled) .service-icon,
+.js .fade-in:not(.is-settled) .why-icon,
+.js .fade-in:not(.is-settled) .pillar-icon {
+  transition: transform var(--dur-reveal) var(--ease-signature) 120ms, opacity var(--dur-reveal) var(--ease-signature) 120ms;
+}
+
+/* Journey connector draws across once the steps arrive */
+.journey-steps::before {
+  transform-origin: left center;
+  transition: transform 1400ms var(--ease-signature) 200ms;
+}
+
+.js .journey-steps:not(.is-revealed)::before {
+  transform: scaleX(0);
+}
+
+/* ---------- Image reveals ------------------------------------------------- */
+/* Welcome image unmasks upward while settling from a slight scale */
+.js .welcome-image-wrap:not(.visible) .welcome-img {
+  clip-path: inset(100% -80px -80px -80px);
+  transform: scale(var(--image-from-scale));
+}
+
+.js .welcome-image-wrap.visible:not(.is-settled) .welcome-img {
+  clip-path: inset(-80px -80px -80px -80px);
+}
+
+.js .welcome-image-wrap:not(.is-settled) .welcome-img {
+  transition:
+    clip-path var(--dur-image) var(--ease-signature) 120ms,
+    transform var(--dur-image) var(--ease-signature) 120ms;
+}
+
+/* Founder portrait: same language, revealing inside its arch */
+.js .founder-image-col:not(.visible) .founder-frame {
+  clip-path: inset(100% -80px -80px -80px);
+}
+
+.js .founder-image-col.visible:not(.is-settled) .founder-frame {
+  clip-path: inset(-80px -80px -80px -80px);
+}
+
+.js .founder-image-col:not(.is-settled) .founder-frame {
+  transition: clip-path var(--dur-image) var(--ease-signature) 120ms;
+}
+
+.js .founder-image-col:not(.visible) .founder-img {
+  transform: scale(var(--image-from-scale));
+}
+
+.js .founder-image-col:not(.visible) .founder-decorative-curve path {
+  stroke-dashoffset: 1;
+}
+
+.founder-decorative-curve path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1800ms var(--ease-signature) 500ms;
+}
+
+.js .founder-image-col:not(.visible) .founder-float-tag {
+  opacity: 0;
+  transform: translate3d(0, 12px, 0);
+}
+
+.founder-float-tag {
+  transition: opacity var(--dur-reveal) var(--ease-signature) 600ms, transform var(--dur-reveal) var(--ease-signature) 600ms;
+}
+
+/* Event images (rendered by app.js) settle from a slight scale */
+.js .event-row:not(.visible) .event-img {
+  transform: scale(var(--image-from-scale));
+}
+
+/* CTA backdrop: slow settle when the section arrives */
+.cta-bg img {
+  transition: transform 1800ms var(--ease-signature);
+}
+
+.js .cta-section:not(.is-revealed) .cta-bg img {
+  transform: scale(1.08);
+}
+
+/* ---------- Founder: CSS-3D orbit + glass sphere -------------------------- */
+.founder-orbit {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.founder-orbit-ring {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 124%;
+  aspect-ratio: 1;
+  margin-left: -62%;
+  margin-top: -62%;
+  border-radius: 50%;
+  border: 1px solid;
+  border-color: rgba(176, 130, 240, 0.85) rgba(196, 150, 252, 0.32) rgba(255, 255, 255, 0.95) rgba(196, 150, 252, 0.32);
+  transform: perspective(900px) rotateX(74deg) rotateY(-10deg) rotateZ(0deg);
+  animation: orbitSpin 26s linear infinite;
+}
+
+.founder-orbit-ring--2 {
+  width: 106%;
+  margin-left: -53%;
+  margin-top: -53%;
+  border-color: rgba(196, 150, 252, 0.28) rgba(176, 130, 240, 0.7) rgba(196, 150, 252, 0.28) rgba(255, 255, 255, 0.85);
+  transform: perspective(900px) rotateX(64deg) rotateY(16deg) rotateZ(0deg);
+  animation-name: orbitSpin2;
+  animation-duration: 38s;
+  animation-direction: reverse;
+}
+
+/* A small bead travelling on the outer ring */
+.founder-orbit-ring--1::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #FFFFFF 0%, #E6D0FF 45%, #C396FC 100%);
+  box-shadow: 0 0 12px rgba(196, 150, 252, 0.6);
+}
+
+@keyframes orbitSpin {
+  from { transform: perspective(900px) rotateX(74deg) rotateY(-10deg) rotateZ(0deg); }
+  to   { transform: perspective(900px) rotateX(74deg) rotateY(-10deg) rotateZ(360deg); }
+}
+
+@keyframes orbitSpin2 {
+  from { transform: perspective(900px) rotateX(64deg) rotateY(16deg) rotateZ(0deg); }
+  to   { transform: perspective(900px) rotateX(64deg) rotateY(16deg) rotateZ(360deg); }
+}
+
+/* Glass sphere floating in front of the arch edge (foreground depth layer) */
+.founder-orb {
+  position: absolute;
+  top: 16%;
+  left: -6%;
+  z-index: 3;
+  width: clamp(54px, 6vw, 78px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 26%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.6) 9%, transparent 22%),
+    radial-gradient(circle at 50% 50%, rgba(240, 228, 255, 0.55) 0%, rgba(214, 180, 255, 0.5) 55%, rgba(155, 125, 212, 0.55) 100%);
+  box-shadow:
+    inset -8px -12px 20px rgba(130, 90, 200, 0.28),
+    inset 6px 8px 14px rgba(255, 255, 255, 0.65),
+    0 18px 34px rgba(130, 90, 200, 0.2);
+  animation: orbFloat 11s var(--ease-ambient) infinite;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(4px, -12px, 0); }
+}
+
+/* Ambient motion only runs while its section is on screen */
+.js .founder-section:not(.in-view) .founder-orbit-ring,
+.js .founder-section:not(.in-view) .founder-orb,
+.js .founder-section:not(.in-view) .founder-inner-light,
+.js .events-section:not(.in-view) .events-inner-light,
+.js .testimonials-section:not(.in-view) .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ---------- Testimonials ---------------------------------------------------- */
+.testimonial-card {
+  transition:
+    transform var(--dur-card) var(--ease-signature),
+    box-shadow var(--dur-card) var(--ease-signature),
+    border-color var(--dur-ui) var(--ease-signature);
+}
+
+.marquee-row:hover .testimonial-card:hover {
+  border-color: rgba(196, 150, 252, 0.6);
+}
+
+/* ---------- Atmosphere: same look, cheaper to render ---------------------- */
+.atmosphere-glow .glow-orb {
+  filter: none;
+}
+
+.cursor-glow {
+  left: 0;
+  top: 0;
+  filter: none;
+  transform: translate3d(calc(var(--cursor-x, 50vw) - 50%), calc(var(--cursor-y, 50vh) - 50%), 0);
+  transition: transform 800ms var(--ease-signature), opacity 600ms var(--ease-signature);
+}
+
+/* ---------- Responsive ------------------------------------------------------ */
+@media (max-width: 768px) {
+  .founder-orbit-ring {
+    width: 112%;
+    margin-left: -56%;
+    margin-top: -56%;
+  }
+
+  .founder-orbit-ring--2 {
+    width: 98%;
+    margin-left: -49%;
+    margin-top: -49%;
+  }
+
+  .founder-orb {
+    left: -2%;
+  }
+
+  .hero-halo {
+    inset: 64px 0 0;
+  }
+}
+
+/* No hover on touch screens: no lift or tilt to get stuck after a tap */
+@media (hover: none) {
+  .js [data-tilt].is-settled:hover {
+    --lift: 0px;
+  }
+
+  .service-card:hover::after,
+  .why-card:hover::after,
+  .pillar-card:hover::after {
+    opacity: 0;
+  }
+}
+
+/* ---------- Reduced motion -------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .js .fade-in:not(.visible),
+  .js .fade-in[data-stagger]:not(.visible) > * {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hl-line-inner,
+  .hero-eyebrow,
+  .hero-sub,
+  .hero-ctas > *,
+  .hero-halo-fallback {
+    animation: none;
+  }
+
+  .hero-organic-line path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .js .welcome-image-wrap:not(.visible) .welcome-img,
+  .js .founder-image-col:not(.visible) .founder-frame {
+    clip-path: none;
+  }
+
+  .js [data-tilt].is-settled,
+  .service-icon,
+  .why-icon,
+  .pillar-icon {
+    transform: none;
+  }
+
+  .founder-orbit-ring,
+  .founder-orb,
+  .btn-submit.is-loading {
+    animation: none;
+  }
+
+  .js .journey-steps:not(.is-revealed)::before,
+  .js .cta-section:not(.is-revealed) .cta-bg img {
+    transform: none;
   }
 }

@@ -9,8 +9,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="icon" type="image/png" href="finalcropimg.png" />
-  <link rel="apple-touch-icon" href="finalcropimg.png" />
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/favicon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
   <link rel="preload" as="image" href="logofb.webp" type="image/webp" fetchpriority="high" />
 
   <!-- Open Graph / WhatsApp / Facebook Preview Tags -->
@@ -34,7 +36,7 @@
   <meta name="twitter:image" content="https://universehealinghaven.vercel.app/og-image.png" />
   <meta name="twitter:image:alt" content="Universe Healing Haven official website preview image" />
 
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=5" />
 </head>
 <body>
 
@@ -102,11 +104,20 @@
 
     <!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
     <section class="hero-section" id="home">
+      <!-- 3D orbital halo: WebGL canvas is injected by assets/js/halo3d.js; the SVG is the static fallback -->
+      <div class="hero-halo" aria-hidden="true">
+        <svg class="hero-halo-fallback" viewBox="0 0 1000 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="500" cy="300" rx="236" ry="226" stroke="#D6B4FF" stroke-width="1.2" opacity="0.55"/>
+          <ellipse cx="500" cy="300" rx="300" ry="84" stroke="#C396FC" stroke-width="3" opacity="0.35" transform="rotate(-8 500 300)"/>
+          <ellipse cx="500" cy="300" rx="232" ry="132" stroke="#E0C6FF" stroke-width="1" opacity="0.5" transform="rotate(34 500 300)"/>
+          <circle cx="772" cy="262" r="9" fill="#E6D0FF" stroke="#C396FC" stroke-width="1" opacity="0.8"/>
+        </svg>
+      </div>
       <div class="hero-inner">
-        <div class="hero-text fade-in" data-delay="0">
+        <div class="hero-text">
           <p class="hero-eyebrow">Universe Healing Haven</p>
           <h1 class="hero-headline">
-            A Journey Back<br />to <em>Balance.</em>
+            <span class="hl-line"><span class="hl-line-inner">A Journey Back</span></span><br /><span class="hl-line"><span class="hl-line-inner">to <em>Balance.</em></span></span>
           </h1>
           <p class="hero-sub">Create space to pause, reconnect with yourself and restore your inner harmony. Move gently towards a healthier, more balanced and more fulfilling life.</p>
           <div class="hero-ctas">
@@ -116,11 +127,11 @@
         </div>
       </div>
       <!-- Organic SVG curves -->
-      <svg class="hero-organic-line hero-organic-line--1" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 280 Q80 200 160 220 Q240 240 320 160 Q380 100 390 40" stroke="#D6B4FF" stroke-width="1.2" fill="none" opacity="0.35"/>
+      <svg aria-hidden="true" class="hero-organic-line hero-organic-line--1" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path pathLength="1" d="M10 280 Q80 200 160 220 Q240 240 320 160 Q380 100 390 40" stroke="#D6B4FF" stroke-width="1.2" fill="none" opacity="0.35"/>
       </svg>
-      <svg class="hero-organic-line hero-organic-line--2" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M290 10 Q220 80 200 160 Q180 240 100 290 Q40 330 10 390" stroke="#E6D0FF" stroke-width="1.2" fill="none" opacity="0.30"/>
+      <svg aria-hidden="true" class="hero-organic-line hero-organic-line--2" viewBox="0 0 300 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path pathLength="1" d="M290 10 Q220 80 200 160 Q180 240 100 290 Q40 330 10 390" stroke="#E6D0FF" stroke-width="1.2" fill="none" opacity="0.30"/>
       </svg>
     </section>
 
@@ -170,9 +181,9 @@
           <div class="pillar-card fade-in" data-delay="0">
             <div class="pillar-icon">
               <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="24" cy="24" r="20" stroke="#a8b69d" stroke-width="1.2"/>
-                <path d="M24 14 C24 14 17 20 17 26 C17 29.9 20.1 33 24 33 C27.9 33 31 29.9 31 26 C31 20 24 14 24 14Z" stroke="#6b7d5e" stroke-width="1.4" fill="rgba(168,182,157,0.2)"/>
-                <line x1="24" y1="33" x2="24" y2="38" stroke="#6b7d5e" stroke-width="1.2"/>
+                <circle cx="24" cy="24" r="20" stroke="#C9A8F5" stroke-width="1.2"/>
+                <path d="M24 14 C24 14 17 20 17 26 C17 29.9 20.1 33 24 33 C27.9 33 31 29.9 31 26 C31 20 24 14 24 14Z" stroke="#9B7DD4" stroke-width="1.4" fill="rgba(214,180,255,0.22)"/>
+                <line x1="24" y1="33" x2="24" y2="38" stroke="#9B7DD4" stroke-width="1.2"/>
               </svg>
             </div>
             <h3 class="pillar-title">Heal</h3>
@@ -182,12 +193,12 @@
           <div class="pillar-card fade-in" data-delay="120">
             <div class="pillar-icon">
               <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="24" cy="24" r="20" stroke="#a8b69d" stroke-width="1.2"/>
-                <line x1="12" y1="24" x2="36" y2="24" stroke="#6b7d5e" stroke-width="1.4"/>
-                <circle cx="18" cy="18" r="4" stroke="#6b7d5e" stroke-width="1.2" fill="rgba(168,182,157,0.2)"/>
-                <circle cx="30" cy="30" r="4" stroke="#6b7d5e" stroke-width="1.2" fill="rgba(200,182,142,0.2)"/>
-                <path d="M18 22 L18 24" stroke="#a8b69d" stroke-width="1"/>
-                <path d="M30 24 L30 26" stroke="#a8b69d" stroke-width="1"/>
+                <circle cx="24" cy="24" r="20" stroke="#C9A8F5" stroke-width="1.2"/>
+                <line x1="12" y1="24" x2="36" y2="24" stroke="#9B7DD4" stroke-width="1.4"/>
+                <circle cx="18" cy="18" r="4" stroke="#9B7DD4" stroke-width="1.2" fill="rgba(214,180,255,0.22)"/>
+                <circle cx="30" cy="30" r="4" stroke="#9B7DD4" stroke-width="1.2" fill="rgba(214,180,255,0.22)"/>
+                <path d="M18 22 L18 24" stroke="#C9A8F5" stroke-width="1"/>
+                <path d="M30 24 L30 26" stroke="#C9A8F5" stroke-width="1"/>
               </svg>
             </div>
             <h3 class="pillar-title">Balance</h3>
@@ -197,16 +208,16 @@
           <div class="pillar-card fade-in" data-delay="240">
             <div class="pillar-icon">
               <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="24" cy="24" r="20" stroke="#a8b69d" stroke-width="1.2"/>
-                <circle cx="24" cy="24" r="7" stroke="#6b7d5e" stroke-width="1.2" fill="rgba(168,182,157,0.2)"/>
-                <line x1="24" y1="10" x2="24" y2="14" stroke="#6b7d5e" stroke-width="1.2"/>
-                <line x1="24" y1="34" x2="24" y2="38" stroke="#6b7d5e" stroke-width="1.2"/>
-                <line x1="10" y1="24" x2="14" y2="24" stroke="#6b7d5e" stroke-width="1.2"/>
-                <line x1="34" y1="24" x2="38" y2="24" stroke="#6b7d5e" stroke-width="1.2"/>
-                <line x1="14.3" y1="14.3" x2="17.2" y2="17.2" stroke="#a8b69d" stroke-width="1"/>
-                <line x1="30.8" y1="30.8" x2="33.7" y2="33.7" stroke="#a8b69d" stroke-width="1"/>
-                <line x1="33.7" y1="14.3" x2="30.8" y2="17.2" stroke="#a8b69d" stroke-width="1"/>
-                <line x1="17.2" y1="30.8" x2="14.3" y2="33.7" stroke="#a8b69d" stroke-width="1"/>
+                <circle cx="24" cy="24" r="20" stroke="#C9A8F5" stroke-width="1.2"/>
+                <circle cx="24" cy="24" r="7" stroke="#9B7DD4" stroke-width="1.2" fill="rgba(214,180,255,0.22)"/>
+                <line x1="24" y1="10" x2="24" y2="14" stroke="#9B7DD4" stroke-width="1.2"/>
+                <line x1="24" y1="34" x2="24" y2="38" stroke="#9B7DD4" stroke-width="1.2"/>
+                <line x1="10" y1="24" x2="14" y2="24" stroke="#9B7DD4" stroke-width="1.2"/>
+                <line x1="34" y1="24" x2="38" y2="24" stroke="#9B7DD4" stroke-width="1.2"/>
+                <line x1="14.3" y1="14.3" x2="17.2" y2="17.2" stroke="#C9A8F5" stroke-width="1"/>
+                <line x1="30.8" y1="30.8" x2="33.7" y2="33.7" stroke="#C9A8F5" stroke-width="1"/>
+                <line x1="33.7" y1="14.3" x2="30.8" y2="17.2" stroke="#C9A8F5" stroke-width="1"/>
+                <line x1="17.2" y1="30.8" x2="14.3" y2="33.7" stroke="#C9A8F5" stroke-width="1"/>
               </svg>
             </div>
             <h3 class="pillar-title">Wellness</h3>
@@ -229,8 +240,8 @@
           <div class="service-card fade-in" data-delay="0">
             <div class="service-icon">
               <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M14 3 C14 3 5 10 5 16 C5 21 9 25 14 25 C19 25 23 21 23 16 C23 10 14 3 14 3Z" stroke="#6b7d5e" stroke-width="1.3" fill="none"/>
-                <path d="M14 10 L14 18 M10 14 L18 14" stroke="#8a9a7b" stroke-width="1.2"/>
+                <path d="M14 3 C14 3 5 10 5 16 C5 21 9 25 14 25 C19 25 23 21 23 16 C23 10 14 3 14 3Z" stroke="#9B7DD4" stroke-width="1.3" fill="none"/>
+                <path d="M14 10 L14 18 M10 14 L18 14" stroke="#B08EE6" stroke-width="1.2"/>
               </svg>
             </div>
             <h3 class="service-title">Energy Healing</h3>
@@ -240,10 +251,10 @@
           <div class="service-card fade-in" data-delay="80">
             <div class="service-icon">
               <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="14" cy="14" r="10" stroke="#6b7d5e" stroke-width="1.3" fill="none"/>
-                <circle cx="14" cy="14" r="4" stroke="#8a9a7b" stroke-width="1.2" fill="rgba(168,182,157,0.15)"/>
-                <line x1="14" y1="4" x2="14" y2="7" stroke="#a8b69d" stroke-width="1"/>
-                <line x1="14" y1="21" x2="14" y2="24" stroke="#a8b69d" stroke-width="1"/>
+                <circle cx="14" cy="14" r="10" stroke="#9B7DD4" stroke-width="1.3" fill="none"/>
+                <circle cx="14" cy="14" r="4" stroke="#B08EE6" stroke-width="1.2" fill="rgba(214,180,255,0.18)"/>
+                <line x1="14" y1="4" x2="14" y2="7" stroke="#C9A8F5" stroke-width="1"/>
+                <line x1="14" y1="21" x2="14" y2="24" stroke="#C9A8F5" stroke-width="1"/>
               </svg>
             </div>
             <h3 class="service-title">Meditation &amp; Mindfulness</h3>
@@ -253,9 +264,9 @@
           <div class="service-card fade-in" data-delay="160">
             <div class="service-icon">
               <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 20 Q8 12 14 14 Q20 16 24 8" stroke="#6b7d5e" stroke-width="1.3" fill="none"/>
-                <circle cx="4" cy="20" r="2" fill="#a8b69d"/>
-                <circle cx="24" cy="8" r="2" fill="#8a9a7b"/>
+                <path d="M4 20 Q8 12 14 14 Q20 16 24 8" stroke="#9B7DD4" stroke-width="1.3" fill="none"/>
+                <circle cx="4" cy="20" r="2" fill="#C9A8F5"/>
+                <circle cx="24" cy="8" r="2" fill="#B08EE6"/>
               </svg>
             </div>
             <h3 class="service-title">Stress Management</h3>
@@ -265,9 +276,9 @@
           <div class="service-card fade-in" data-delay="240">
             <div class="service-icon">
               <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M20 8 C16 6 11 8 10 12 C9 16 12 20 16 21 C20 22 24 19 25 15 C22 17 18 16 16 14 C14 12 14 8 17 6" stroke="#6b7d5e" stroke-width="1.3" fill="none"/>
-                <circle cx="21" cy="5" r="1" fill="#c8b68e"/>
-                <circle cx="25" cy="9" r="0.8" fill="#c8b68e"/>
+                <path d="M20 8 C16 6 11 8 10 12 C9 16 12 20 16 21 C20 22 24 19 25 15 C22 17 18 16 16 14 C14 12 14 8 17 6" stroke="#9B7DD4" stroke-width="1.3" fill="none"/>
+                <circle cx="21" cy="5" r="1" fill="#C396FC"/>
+                <circle cx="25" cy="9" r="0.8" fill="#C396FC"/>
               </svg>
             </div>
             <h3 class="service-title">Sleep &amp; Relaxation</h3>
@@ -277,7 +288,7 @@
           <div class="service-card fade-in" data-delay="320">
             <div class="service-icon">
               <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M14 24 C14 24 4 18 4 11 C4 7 7 4 10 4 C12.5 4 14 6 14 6 C14 6 15.5 4 18 4 C21 4 24 7 24 11 C24 18 14 24 14 24Z" stroke="#6b7d5e" stroke-width="1.3" fill="rgba(168,182,157,0.12)"/>
+                <path d="M14 24 C14 24 4 18 4 11 C4 7 7 4 10 4 C12.5 4 14 6 14 6 C14 6 15.5 4 18 4 C21 4 24 7 24 11 C24 18 14 24 14 24Z" stroke="#9B7DD4" stroke-width="1.3" fill="rgba(214,180,255,0.15)"/>
               </svg>
             </div>
             <h3 class="service-title">Emotional Wellness</h3>
@@ -287,11 +298,11 @@
           <div class="service-card fade-in" data-delay="400">
             <div class="service-icon">
               <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="14" cy="10" r="6" stroke="#6b7d5e" stroke-width="1.3" fill="none"/>
-                <path d="M8 25 Q14 20 20 25" stroke="#6b7d5e" stroke-width="1.3" fill="none"/>
-                <circle cx="12" cy="9" r="1" fill="#8a9a7b"/>
-                <circle cx="16" cy="9" r="1" fill="#8a9a7b"/>
-                <path d="M12 12 Q14 14 16 12" stroke="#a8b69d" stroke-width="1"/>
+                <circle cx="14" cy="10" r="6" stroke="#9B7DD4" stroke-width="1.3" fill="none"/>
+                <path d="M8 25 Q14 20 20 25" stroke="#9B7DD4" stroke-width="1.3" fill="none"/>
+                <circle cx="12" cy="9" r="1" fill="#B08EE6"/>
+                <circle cx="16" cy="9" r="1" fill="#B08EE6"/>
+                <path d="M12 12 Q14 14 16 12" stroke="#C9A8F5" stroke-width="1"/>
               </svg>
             </div>
             <h3 class="service-title">Kids Wellness &amp; Super Brain Yoga</h3>
@@ -351,9 +362,9 @@
           <div class="disclaimer-card">
             <div class="disclaimer-icon">
               <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="11" cy="11" r="9" stroke="#6b7d5e" stroke-width="1.3"/>
-                <line x1="11" y1="7" x2="11" y2="13" stroke="#6b7d5e" stroke-width="1.5" stroke-linecap="round"/>
-                <circle cx="11" cy="15.5" r="0.8" fill="#6b7d5e"/>
+                <circle cx="11" cy="11" r="9" stroke="#9B7DD4" stroke-width="1.3"/>
+                <line x1="11" y1="7" x2="11" y2="13" stroke="#9B7DD4" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="11" cy="15.5" r="0.8" fill="#9B7DD4"/>
               </svg>
             </div>
             <h3 class="disclaimer-title">Important Notice</h3>
@@ -412,8 +423,8 @@
           <div class="why-card fade-in" data-delay="0">
             <div class="why-icon">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2 L12 22 M7 7 Q12 2 17 7 M7 17 Q12 22 17 17" stroke="#a89868" stroke-width="1.3" fill="none"/>
-                <circle cx="12" cy="12" r="3" stroke="#c8b68e" stroke-width="1.2" fill="rgba(200,182,142,0.15)"/>
+                <path d="M12 2 L12 22 M7 7 Q12 2 17 7 M7 17 Q12 22 17 17" stroke="#9B7DD4" stroke-width="1.3" fill="none"/>
+                <circle cx="12" cy="12" r="3" stroke="#C396FC" stroke-width="1.2" fill="rgba(214,180,255,0.18)"/>
               </svg>
             </div>
             <h3 class="why-title">Personalised Care</h3>
@@ -422,9 +433,9 @@
           <div class="why-card fade-in" data-delay="100">
             <div class="why-icon">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="9" stroke="#a89868" stroke-width="1.3" fill="none"/>
-                <circle cx="12" cy="12" r="4" stroke="#c8b68e" stroke-width="1" fill="none"/>
-                <circle cx="12" cy="12" r="1" fill="#c8b68e"/>
+                <circle cx="12" cy="12" r="9" stroke="#9B7DD4" stroke-width="1.3" fill="none"/>
+                <circle cx="12" cy="12" r="4" stroke="#C396FC" stroke-width="1" fill="none"/>
+                <circle cx="12" cy="12" r="1" fill="#C396FC"/>
               </svg>
             </div>
             <h3 class="why-title">Holistic Approach</h3>
@@ -433,9 +444,9 @@
           <div class="why-card fade-in" data-delay="200">
             <div class="why-icon">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 20 Q12 4 20 20" stroke="#a89868" stroke-width="1.3" fill="none"/>
-                <line x1="12" y1="8" x2="12" y2="16" stroke="#c8b68e" stroke-width="1.2"/>
-                <circle cx="12" cy="6" r="1.5" fill="rgba(200,182,142,0.3)" stroke="#c8b68e" stroke-width="1"/>
+                <path d="M4 20 Q12 4 20 20" stroke="#9B7DD4" stroke-width="1.3" fill="none"/>
+                <line x1="12" y1="8" x2="12" y2="16" stroke="#C396FC" stroke-width="1.2"/>
+                <circle cx="12" cy="6" r="1.5" fill="rgba(214,180,255,0.3)" stroke="#C396FC" stroke-width="1"/>
               </svg>
             </div>
             <h3 class="why-title">Peaceful Environment</h3>
@@ -444,9 +455,9 @@
           <div class="why-card fade-in" data-delay="300">
             <div class="why-icon">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 18 L8 14 L12 16 L16 10 L20 6" stroke="#a89868" stroke-width="1.3" fill="none"/>
-                <circle cx="20" cy="6" r="2" fill="rgba(200,182,142,0.3)" stroke="#c8b68e" stroke-width="1"/>
-                <path d="M17 6 L20 6 L20 9" stroke="#c8b68e" stroke-width="1"/>
+                <path d="M4 18 L8 14 L12 16 L16 10 L20 6" stroke="#9B7DD4" stroke-width="1.3" fill="none"/>
+                <circle cx="20" cy="6" r="2" fill="rgba(214,180,255,0.3)" stroke="#C396FC" stroke-width="1"/>
+                <path d="M17 6 L20 6 L20 9" stroke="#C396FC" stroke-width="1"/>
               </svg>
             </div>
             <h3 class="why-title">Continuous Growth</h3>
@@ -481,6 +492,11 @@
       <div class="section-inner founder-inner">
         <div class="founder-image-col fade-in">
           <div class="founder-image-wrap">
+            <div class="founder-orbit" aria-hidden="true">
+              <span class="founder-orbit-ring founder-orbit-ring--1"></span>
+              <span class="founder-orbit-ring founder-orbit-ring--2"></span>
+            </div>
+            <span class="founder-orb" aria-hidden="true"></span>
             <div class="founder-curve-bg"></div>
             <div class="founder-frame">
               <picture>
@@ -491,7 +507,7 @@
             </div>
             <!-- Thin organic decorative curve -->
             <svg class="founder-decorative-curve" viewBox="0 0 120 280" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M60 0 Q20 70 80 140 Q110 180 50 230 Q30 260 60 280" stroke="#D6B4FF" stroke-width="1.2" fill="none" opacity="0.5"/>
+              <path pathLength="1" d="M60 0 Q20 70 80 140 Q110 180 50 230 Q30 260 60 280" stroke="#D6B4FF" stroke-width="1.2" fill="none" opacity="0.5"/>
             </svg>
             <div class="founder-float-tag">
               <span class="founder-tag-name">Jennifer John</span>
@@ -533,7 +549,7 @@
       <!-- ── Marquee Rows (full-width, outside section-inner for edge-to-edge effect) ── -->
       <div class="marquee-wrapper" aria-label="Client testimonials carousel" role="region">
         <!-- Single scrolling row -->
-        <div class="marquee-row" aria-hidden="true">
+        <div class="marquee-row">
           <div class="marquee-track marquee-track--row1" id="marquee-track-1"></div>
         </div>
       </div>
@@ -578,8 +594,8 @@
             <li class="contact-detail-item">
               <div class="contact-detail-icon">
                 <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5z" stroke="#6b7d5e" stroke-width="1.2" fill="none"/>
-                  <path d="M7 10l2 2 4-4" stroke="#6b7d5e" stroke-width="1.3"/>
+                  <path d="M5 3a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V5a2 2 0 00-2-2H5z" stroke="#9B7DD4" stroke-width="1.2" fill="none"/>
+                  <path d="M7 10l2 2 4-4" stroke="#9B7DD4" stroke-width="1.3"/>
                 </svg>
               </div>
               <div class="contact-detail-content">
@@ -774,6 +790,7 @@
     </svg>
   </a>
 
+  <script src="assets/js/halo3d.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>

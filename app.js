@@ -129,9 +129,9 @@ const testimonialsData = [
     return html;
   }
 
-  function buildCard(t) {
+  function buildCard(t, isDuplicate) {
     return (
-      '<article class="testimonial-card">' +
+      '<article class="testimonial-card"' + (isDuplicate ? ' aria-hidden="true"' : '') + '>' +
         '<div class="testimonial-card-top">' +
           '<div class="testimonial-avatar">' + initials(t.name) + '</div>' +
           '<div class="testimonial-meta">' +
@@ -150,10 +150,11 @@ const testimonialsData = [
   function fillTrack(trackId, items) {
     var track = document.getElementById(trackId);
     if (!track) return;
-    // Build single set of cards
-    var cardsHTML = items.map(buildCard).join('');
-    // Duplicate for seamless loop (translateX(-50%) → translateX(0%) animation)
-    track.innerHTML = cardsHTML + cardsHTML;
+    // Build single set of cards, then a visual-only duplicate for the seamless
+    // loop (translateX(-50%) → translateX(0%) animation). Duplicates are not extra reviews.
+    var cardsHTML = items.map(function (t) { return buildCard(t, false); }).join('');
+    var dupHTML = items.map(function (t) { return buildCard(t, true); }).join('');
+    track.innerHTML = cardsHTML + dupHTML;
   }
 
   // Single scrolling row
@@ -324,34 +325,86 @@ const testimonialsData = [
   if (mobileNavClose) mobileNavClose.addEventListener('click', closeNav);
   mobileNavLinks.forEach(link => link.addEventListener('click', closeNav));
 
-  /* ── Intersection Observer: Fade-in ─────────────────────────────────── */
-  const fadeEls = document.querySelectorAll('.fade-in');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const fadeObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const el = entry.target;
-          const delay = parseInt(el.dataset.delay || '0', 10);
-          setTimeout(() => {
-            el.classList.add('visible');
-          }, delay);
-          fadeObserver.unobserve(el);
-        }
-      });
-    },
-    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
-  );
+  /* ── Reveal system ───────────────────────────────────────────────────────
+     .fade-in elements are only hidden when JS runs (html.js), so content is
+     never lost if scripts fail. Header blocks reveal their children in a
+     short stagger (index exposed as --i; timing tokens live in style.css).
+     After the reveal settles, .is-settled swaps to quick interaction timing. */
+  const STAGGER_GROUPS = '.welcome-text, .philosophy-header, .services-header, .wellness-text-col, .journey-header, .why-header, .events-header, .testimonials-header, .cta-content, .contact-info';
+  document.querySelectorAll(STAGGER_GROUPS).forEach((group) => {
+    if (!group.classList.contains('fade-in')) return;
+    group.setAttribute('data-stagger', '');
+    Array.from(group.children).forEach((child, i) => child.style.setProperty('--i', i));
+  });
+
+  const REVEAL_SETTLE_MS = 900;
+  function reveal(el) {
+    const delay = prefersReducedMotion ? 0 : parseInt(el.dataset.delay || '0', 10);
+    setTimeout(() => {
+      el.classList.add('visible');
+      setTimeout(() => el.classList.add('is-settled'), prefersReducedMotion ? 0 : REVEAL_SETTLE_MS);
+    }, delay);
+  }
+
+  const fadeEls = document.querySelectorAll('.fade-in');
+  const fadeObserver = 'IntersectionObserver' in window
+    ? new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              reveal(entry.target);
+              fadeObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+      )
+    : { observe: reveal, unobserve() {} };
 
   fadeEls.forEach((el) => fadeObserver.observe(el));
 
-  /* ── Footer: run decorative animations only while footer is on screen ── */
-  const siteFooter = document.querySelector('.site-footer');
-  if (siteFooter) {
-    new IntersectionObserver((entries) => {
-      siteFooter.classList.toggle('in-view', entries[0].isIntersecting);
-    }).observe(siteFooter);
+  /* ── One-shot reveals for non-.fade-in elements (e.g. CTA backdrop) ──── */
+  if ('IntersectionObserver' in window) {
+    const onceObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed');
+          onceObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('.cta-section, .journey-steps').forEach((el) => onceObserver.observe(el));
+  } else {
+    document.querySelectorAll('.cta-section, .journey-steps').forEach((el) => el.classList.add('is-revealed'));
   }
+
+  /* ── Ambient animations run only while their section is on screen ────── */
+  const ambientEls = document.querySelectorAll('.site-footer, .founder-section, .events-section, .testimonials-section');
+  if ('IntersectionObserver' in window) {
+    const ambientObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => entry.target.classList.toggle('in-view', entry.isIntersecting));
+    });
+    ambientEls.forEach((el) => ambientObserver.observe(el));
+  } else {
+    ambientEls.forEach((el) => el.classList.add('in-view'));
+  }
+
+  /* ── Button arrows: wrap the trailing arrow so it can nudge on hover ── */
+  document.querySelectorAll('.btn-primary, .btn-ghost, .btn-outline, .btn-book, .btn-text-link, .btn-cta-primary, .btn-submit').forEach((btn) => {
+    const last = btn.lastChild;
+    if (!last || last.nodeType !== Node.TEXT_NODE || !/\u2192\s*$/.test(last.textContent)) return;
+    last.textContent = last.textContent.replace(/\s*\u2192\s*$/, ' ');
+    const arrow = document.createElement('span');
+    arrow.className = 'btn-arrow';
+    arrow.setAttribute('aria-hidden', 'true');
+    arrow.textContent = '\u2192';
+    btn.appendChild(arrow);
+  });
+
+  /* ── Mobile nav: expose link index for the staggered entrance ───────── */
+  document.querySelectorAll('.mobile-nav > a').forEach((link, i) => link.style.setProperty('--i', i));
 
   /* ── Smooth scroll: Anchor links ─────────────────────────────────────── */
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
@@ -363,60 +416,64 @@ const testimonialsData = [
         e.preventDefault();
         const headerHeight = header ? header.offsetHeight : 0;
         const targetTop = target.getBoundingClientRect().top + window.scrollY - headerHeight;
-        window.scrollTo({ top: targetTop, behavior: 'smooth' });
+        window.scrollTo({ top: targetTop, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
       }
     });
   });
 
-  /* ── Service Card hover tilt (desktop only) ──────────────────────────── */
-  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    const serviceCards = document.querySelectorAll('.service-card');
-    serviceCards.forEach((card) => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        card.style.transform = `translateY(-6px) rotateX(${y * -3}deg) rotateY(${x * 3}deg)`;
-        card.style.transition = 'transform 0.1s ease';
-      });
+  /* ── Card depth: one delegated pointer handler (desktop, motion allowed) ──
+     Sets --rx / --ry (tilt) and --mx / --my (highlight) on the hovered card;
+     the transform itself is composed in CSS so it stacks with the reveal. */
+  const TILT_CARDS = '.pillar-card, .service-card, .why-card';
+  document.querySelectorAll(TILT_CARDS).forEach((card) => card.setAttribute('data-tilt', ''));
 
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = '';
-        card.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s';
-      });
-    });
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !prefersReducedMotion) {
+    const MAX_TILT = 3; // degrees: subtle, never hard to read
+    let tiltCard = null;
+    let tiltFrame = 0;
+    let pointerX = 0;
+    let pointerY = 0;
 
-    /* ── Pillar Card hover tilt ── */
-    const pillarCards = document.querySelectorAll('.pillar-card');
-    pillarCards.forEach((card) => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        card.style.transform = `translateY(-8px) rotateX(${y * -4}deg) rotateY(${x * 4}deg)`;
-      });
+    const applyTilt = () => {
+      tiltFrame = 0;
+      if (!tiltCard) return;
+      const rect = tiltCard.getBoundingClientRect();
+      const x = (pointerX - rect.left) / rect.width;
+      const y = (pointerY - rect.top) / rect.height;
+      tiltCard.style.setProperty('--ry', ((x - 0.5) * 2 * MAX_TILT).toFixed(2) + 'deg');
+      tiltCard.style.setProperty('--rx', ((0.5 - y) * 2 * MAX_TILT).toFixed(2) + 'deg');
+      tiltCard.style.setProperty('--mx', (x * 100).toFixed(1) + '%');
+      tiltCard.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+      tiltCard.style.setProperty('--px', (x - 0.5).toFixed(3));
+      tiltCard.style.setProperty('--py', (y - 0.5).toFixed(3));
+    };
 
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = '';
-        card.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-      });
-    });
+    const releaseTilt = (card) => {
+      card.classList.remove('is-tilting');
+      card.style.removeProperty('--rx');
+      card.style.removeProperty('--ry');
+      card.style.removeProperty('--px');
+      card.style.removeProperty('--py');
+    };
 
-    /* ── Why Card hover tilt ── */
-    const whyCards = document.querySelectorAll('.why-card');
-    whyCards.forEach((card) => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = (e.clientX - rect.left) / rect.width - 0.5;
-        const y = (e.clientY - rect.top) / rect.height - 0.5;
-        card.style.transform = `translateY(-6px) rotateX(${y * -3}deg) rotateY(${x * 3}deg)`;
-        card.style.transition = 'transform 0.1s ease';
-      });
+    document.addEventListener('pointerover', (e) => {
+      const card = e.target.closest('[data-tilt]');
+      if (card === tiltCard) return;
+      if (tiltCard) releaseTilt(tiltCard);
+      tiltCard = card;
+      if (tiltCard) tiltCard.classList.add('is-tilting');
+    }, { passive: true });
 
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = '';
-        card.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s';
-      });
+    document.addEventListener('pointermove', (e) => {
+      if (!tiltCard) return;
+      pointerX = e.clientX;
+      pointerY = e.clientY;
+      if (!tiltFrame) tiltFrame = requestAnimationFrame(applyTilt);
+    }, { passive: true });
+
+    document.documentElement.addEventListener('pointerleave', () => {
+      if (tiltCard) releaseTilt(tiltCard);
+      tiltCard = null;
     });
   }
 
@@ -429,7 +486,7 @@ const testimonialsData = [
           const el = entry.target;
           const number = el.querySelector('.journey-step-number');
           if (number) {
-            number.style.animation = 'journeyPulse 0.6s ease both';
+            number.style.animation = prefersReducedMotion ? 'none' : 'journeyPulse 0.7s cubic-bezier(0.22, 1, 0.36, 1) both';
           }
           journeyObserver.unobserve(el);
         }
@@ -444,8 +501,7 @@ const testimonialsData = [
   const journeyStyle = document.createElement('style');
   journeyStyle.textContent = `
     @keyframes journeyPulse {
-      0% { transform: scale(0.7); opacity: 0; }
-      60% { transform: scale(1.1); }
+      0% { transform: scale(0.82); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
   `;
@@ -467,14 +523,26 @@ const testimonialsData = [
       required.forEach((field) => {
         if (!field.value.trim()) {
           field.style.borderColor = 'rgba(180, 100, 80, 0.5)';
-          field.addEventListener('input', () => {
+          field.classList.remove('is-invalid');
+          void field.offsetWidth; // restart the shake on repeated submits
+          field.classList.add('is-invalid');
+          field.setAttribute('aria-invalid', 'true');
+          const clear = () => {
             field.style.borderColor = '';
-          }, { once: true });
+            field.classList.remove('is-invalid');
+            field.removeAttribute('aria-invalid');
+          };
+          field.addEventListener('input', clear, { once: true });
+          field.addEventListener('change', clear, { once: true });
           valid = false;
         }
       });
 
-      if (!valid) return;
+      if (!valid) {
+        const firstInvalid = bookingForm.querySelector('[aria-invalid="true"]');
+        if (firstInvalid) firstInvalid.focus();
+        return;
+      }
 
       // Retrieve form values
       const fullName = document.getElementById('fullName').value.trim();
@@ -550,6 +618,7 @@ const testimonialsData = [
       // Update UI
       submitBtn.textContent = 'Opening WhatsApp...';
       submitBtn.disabled = true;
+      submitBtn.classList.add('is-loading');
 
       setTimeout(() => {
         bookingForm.querySelectorAll('.form-group, .form-row').forEach(g => {
