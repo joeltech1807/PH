@@ -156,12 +156,8 @@ const testimonialsData = [
     track.innerHTML = cardsHTML + cardsHTML;
   }
 
-  // Row 1: all testimonials
+  // Single scrolling row
   fillTrack('marquee-track-1', testimonialsData);
-
-  // Row 2: rotate array by 3 for visual variety
-  var row2 = testimonialsData.slice(3).concat(testimonialsData.slice(0, 3));
-  fillTrack('marquee-track-2', row2);
 })();
 
 (function () {
