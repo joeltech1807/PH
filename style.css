@@ -40,6 +40,14 @@
   --shadow-hover:    0 16px 48px rgba(38, 32, 43, 0.10);
   --shadow-card:     0 4px 20px rgba(38, 32, 43, 0.05);
 
+  /* Section surface: the treatment used by "Stories of Hope & Healing".
+     Sections stay see-through (no tint, no backdrop blur) so the shared fixed
+     backdrop (.scroll-bg-wrap + .scroll-bg-overlay) reads the same everywhere. */
+  --section-surface:   transparent;
+  --section-backdrop:  none;
+  --section-glow-core: rgba(230, 208, 255, 0.26);
+  --section-glow-mid:  rgba(214, 180, 255, 0.10);
+
   /* â”€â”€ Spacing â”€â”€ */
   --section-pad:     clamp(80px, 9vw, 130px);
   --inner-max:       1280px;
@@ -606,7 +614,7 @@ button {
   min-height: 100svh;
   display: flex;
   align-items: center;
-  background: transparent;
+  background: var(--section-surface);
   overflow: hidden;
   padding-top: 74px;
 }
@@ -615,7 +623,7 @@ button {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 60% 50% at 70% 40%, rgba(230, 208, 255, 0.22) 0%, transparent 70%);
+  background: radial-gradient(ellipse 60% 50% at 70% 40%, var(--section-glow-core) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -734,9 +742,9 @@ button {
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .welcome-section {
   padding: var(--section-pad) 0;
-  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--section-surface);
+  backdrop-filter: var(--section-backdrop);
+  -webkit-backdrop-filter: var(--section-backdrop);
 }
 
 .welcome-inner {
@@ -854,9 +862,9 @@ button {
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .philosophy-section {
   padding: var(--section-pad) 0;
-  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-tertiary) 50%, var(--bg-secondary) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--section-surface);
+  backdrop-filter: var(--section-backdrop);
+  -webkit-backdrop-filter: var(--section-backdrop);
 }
 
 .philosophy-header {
@@ -949,9 +957,9 @@ button {
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .services-section {
   padding: var(--section-pad) 0;
-  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--section-surface);
+  backdrop-filter: var(--section-backdrop);
+  -webkit-backdrop-filter: var(--section-backdrop);
 }
 
 .services-header {
@@ -1040,9 +1048,9 @@ button {
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .wellness-section {
   padding: var(--section-pad) 0;
-  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--section-surface);
+  backdrop-filter: var(--section-backdrop);
+  -webkit-backdrop-filter: var(--section-backdrop);
 }
 
 .wellness-inner {
@@ -1177,9 +1185,9 @@ button {
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .journey-section {
   padding: var(--section-pad) 0;
-  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-tertiary) 50%, var(--bg-primary) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--section-surface);
+  backdrop-filter: var(--section-backdrop);
+  -webkit-backdrop-filter: var(--section-backdrop);
   position: relative;
   overflow: hidden;
 }
@@ -1291,9 +1299,9 @@ button {
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .why-section {
   padding: var(--section-pad) 0;
-  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--section-surface);
+  backdrop-filter: var(--section-backdrop);
+  -webkit-backdrop-filter: var(--section-backdrop);
 }
 
 .why-header {
@@ -1365,9 +1373,9 @@ button {
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .events-section {
   padding: var(--section-pad) 0;
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--section-surface);
+  backdrop-filter: var(--section-backdrop);
+  -webkit-backdrop-filter: var(--section-backdrop);
   position: relative;
   overflow: hidden;
 }
@@ -1381,8 +1389,8 @@ button {
   height: 80%;
   background: radial-gradient(
     ellipse 70% 60% at 60% 40%,
-    rgba(230, 208, 255, 0.22) 0%,
-    rgba(214, 180, 255, 0.10) 40%,
+    var(--section-glow-core) 0%,
+    var(--section-glow-mid) 40%,
     transparent 70%
   );
   pointer-events: none;
@@ -1684,9 +1692,9 @@ button {
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .founder-section {
   padding: var(--section-pad) 0;
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--section-surface);
+  backdrop-filter: var(--section-backdrop);
+  -webkit-backdrop-filter: var(--section-backdrop);
   position: relative;
   overflow: hidden;
 }
@@ -1700,8 +1708,8 @@ button {
   height: 70%;
   background: radial-gradient(
     ellipse 70% 60% at 50% 50%,
-    rgba(230, 208, 255, 0.18) 0%,
-    rgba(214, 180, 255, 0.08) 40%,
+    var(--section-glow-core) 0%,
+    var(--section-glow-mid) 40%,
     transparent 70%
   );
   pointer-events: none;
@@ -1933,7 +1941,7 @@ button {
   padding: var(--section-pad) 0 calc(var(--section-pad) * 0.75);
   position: relative;
   overflow: hidden;
-  background: transparent;
+  background: var(--section-surface);
 }
 
 .testimonials-inner-light {
@@ -1943,7 +1951,7 @@ button {
   width: 520px;
   height: 520px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(230, 208, 255, 0.26) 0%, rgba(214, 180, 255, 0.10) 50%, transparent 70%);
+  background: radial-gradient(circle, var(--section-glow-core) 0%, var(--section-glow-mid) 50%, transparent 70%);
   filter: blur(80px);
   pointer-events: none;
   z-index: 0;
@@ -2300,9 +2308,9 @@ button {
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 .contact-section {
   padding: var(--section-pad) 0;
-  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: var(--section-surface);
+  backdrop-filter: var(--section-backdrop);
+  -webkit-backdrop-filter: var(--section-backdrop);
 }
 
 .contact-inner {
